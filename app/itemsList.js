@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import globalStyle from '../styles/globalStyle';
-import items from '../data/items_list'; // Import JSON file
+import items from '../data/items_list'; 
 import { Image } from 'expo-image';
 import Item from './components/item';
 import { useNavigation, router } from 'expo-router';

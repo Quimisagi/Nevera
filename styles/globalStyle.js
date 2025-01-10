@@ -38,6 +38,10 @@ const globalStyle = StyleSheet.create({
     fontFamily: 'PlusJakartaSans',
     fontWeight: 'normal'
   },
+  baseText: {
+    fontFamily: 'PlusJakartaSans',
+    fontSize: 15,
+  },
 });
 
 export default globalStyle;
