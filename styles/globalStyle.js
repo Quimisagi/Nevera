@@ -8,12 +8,21 @@ Font.loadAsync({
 });
 
 const globalStyle = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontFamily: 'PlusJakarta',
+    padding: 22.5,
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+  },
+  element: {
+    margin: 2.5,
+  },
+
+  row: {
+    flexDirection: 'row',
   },
   h1: {
     fontSize: 24,
@@ -23,6 +32,11 @@ const globalStyle = StyleSheet.create({
   h2: {
     fontSize: 20,
     fontFamily: 'Poppins',
+  },
+  h4: {
+    fontSize: 16,
+    fontFamily: 'PlusJakartaSans',
+    fontWeight: 'normal'
   },
 });
 

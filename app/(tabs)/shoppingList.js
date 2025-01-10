@@ -1,13 +1,16 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import globalStyle from '../../styles/globalStyle';
+import Item from '../components/item';
 import { Link } from 'expo-router';
+import { router } from "expo-router";
 
 export default function ShoppingList() {
   return (
     <View>
-      <Text style={globalStyle.h1}>ShoppingList</Text>
-      <Text>Welcome to ShoppingList</Text>
+      <TouchableOpacity onPress={() =>router.push({ pathname:'/itemsList' })}>
+        <Text>Welcome to ShoppingList</Text>
+      </TouchableOpacity>
     </View>
   );
 }

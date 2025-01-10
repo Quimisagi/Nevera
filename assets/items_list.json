@@ -1,0 +1,117 @@
+[
+  {
+    "name": "bread",
+    "icon": "require('../assets/icons/bread-loaf.png')",
+    "time": 10
+  },
+  {
+    "name": "butter",
+    "icon": "require('../assets/icons/biscuit.png')",
+    "time": 30
+  },
+  {
+    "name": "carrots",
+    "icon": "require('../assets/icons/carrot.png')",
+    "time": 20
+  },
+  {
+    "name": "cheese",
+    "icon": "require('../assets/icons/cheese.png')",
+    "time": 15
+  },
+  {
+    "name": "chikuwa",
+    "icon": "require('../assets/icons/sausages.png')",
+    "time": 7
+  },
+  {
+    "name": "cooked-rice",
+    "icon": "require('../assets/icons/rice-bowl.png')",
+    "time": 2
+  },
+  {
+    "name": "eggplant",
+    "icon": "require('../assets/icons/eggplant.png')",
+    "time": 7
+  },
+  {
+    "name": "eggs",
+    "icon": "require('../assets/icons/eggs.png')",
+    "time": 22
+  },
+  {
+    "name": "fish",
+    "icon": "require('../assets/icons/whole-fish.png')",
+    "time": 3
+  },
+  {
+    "name": "kimchi",
+    "icon": "require('../assets/icons/jam.png')",
+    "time": 35
+  },
+  {
+    "name": "lettuce",
+    "icon": "require('../assets/icons/lettuce.png')",
+    "time": 8
+  },
+  {
+    "name": "milk",
+    "icon": "require('../assets/icons/milk-bottle.png')",
+    "time": 7
+  },
+  {
+    "name": "moyashi",
+    "icon": "require('../assets/icons/basil.png')",
+    "time": 3
+  },
+  {
+    "name": "mushroom",
+    "icon": "require('../assets/icons/mushroom.png')",
+    "time": 6
+  },
+  {
+    "name": "natto",
+    "icon": "require('../assets/icons/grains-of-rice.png')",
+    "time": 7
+  },
+  {
+    "name": "nuts",
+    "icon": "require('../assets/icons/cashew.png')",
+    "time": 0
+  },
+  {
+    "name": "onion",
+    "icon": "require('../assets/icons/onion.png')",
+    "time": 24
+  },
+  {
+    "name": "pork",
+    "icon": "require('../assets/icons/meat.png')",
+    "time": 3
+  },
+  {
+    "name": "potato",
+    "icon": "require('../assets/icons/potato.png')",
+    "time": 24
+  },
+  {
+    "name": "salt",
+    "icon": "require('../assets/icons/salt.png')",
+    "time": 0
+  },
+  {
+    "name": "spaghetti",
+    "icon": "require('../assets/icons/spaghetti.png')",
+    "time": 0
+  },
+  {
+    "name": "sugar",
+    "icon": "require('../assets/icons/sugar.png')",
+    "time": 0
+  },
+  {
+    "name": "tomato",
+    "icon": "require('../assets/icons/tomato.png')",
+    "time": 5
+  }
+]
