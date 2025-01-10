@@ -10,7 +10,7 @@ Font.loadAsync({
 const globalStyle = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    padding: 22.5,
+    padding: 17.5,
   },
   centered: {
     justifyContent: "center",

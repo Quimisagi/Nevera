@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    margin: 6.5,
+    margin: 5,
     padding: 10,
     borderRadius: 10,
     shadowColor: '#000',

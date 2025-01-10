@@ -4,13 +4,16 @@ import globalStyle from '../styles/globalStyle';
 import items from '../data/items_list'; // Import JSON file
 import { Image } from 'expo-image';
 import Item from './components/item';
-import { useNavigation } from 'expo-router';
+import { useNavigation, router } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
+import { useGlobal } from '../utils/globalProvider';
 
 export default function ItemsList() {
   const navigation = useNavigation();
   const [numColumns, setNumColumns] = useState(3);
   const [selectedItems, setSelectedItems] = useState([]);
+
+  const { shoppingListSelectedItems, setShoppingListSelectedItems } = useGlobal();
 
   const toggleItem = (index) => {
     const newItems = selectedItems.includes(index)
@@ -19,7 +22,13 @@ export default function ItemsList() {
     setSelectedItems(newItems);
   };
 
+  const handleAddItems = () => {
+    setShoppingListSelectedItems(selectedItems);
+    router.back();
+  }
+
   useEffect(() => {
+    setSelectedItems(shoppingListSelectedItems);
     const calculateColumns = () => {
       const screenWidth = Dimensions.get('window').width - 45;
       const itemWidth = 100;
@@ -44,6 +53,7 @@ export default function ItemsList() {
       headerRight: () => (
         <TouchableOpacity
           style={{ margin: 15 }}
+          onPress={handleAddItems}
         >
           <AntDesign name="check" size={24} color="black" />
         </TouchableOpacity>
@@ -63,7 +73,7 @@ export default function ItemsList() {
             onPress={() => toggleItem(index)}
             activeOpacity={1}
           >
-            <View style={[globalStyle.itemContainer, { transform: selectedItems.includes(index) ? [{ scale: 1.075 }] : [{ scale: 0.97 }] }]}>
+            <View style={[globalStyle.itemContainer, { transform: selectedItems.includes(index) ? [{ scale: 1 }] : [{ scale: 0.925 }] }]}>
               <Item item={item} isToggled={selectedItems.includes(index)} />
             </View>
           </TouchableOpacity>
