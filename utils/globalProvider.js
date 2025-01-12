@@ -4,10 +4,10 @@ const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
 
-  const [shoppingListSelectedItems, setShoppingListSelectedItems] = useState([]);
+  const [shoppingListAddedItems, setShoppingListAddedItems] = useState([]);
   const globalState = {
-    shoppingListSelectedItems,
-    setShoppingListSelectedItems,
+    shoppingListAddedItems,
+    setShoppingListAddedItems,
   };
   return (
     <GlobalContext.Provider value={globalState}>

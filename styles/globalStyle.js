@@ -42,6 +42,28 @@ const globalStyle = StyleSheet.create({
     fontFamily: 'PlusJakartaSans',
     fontSize: 15,
   },
+  modal: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    width: '95%',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    zIndex: 10, 
+    padding: 30,
+  },
+
+  addButton: {
+    position: 'absolute',
+    right: 25,
+    bottom: 25,
+    borderRadius: 40, 
+    width: 65,
+    height: 65,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
 });
 
 export default globalStyle;

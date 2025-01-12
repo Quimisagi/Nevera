@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import globalStyle from '../styles/globalStyle';
-import items from '../data/items_list'; 
+import { items } from '../data/items_list'; 
 import { Image } from 'expo-image';
 import Item from './components/item';
 import { useNavigation, router } from 'expo-router';
@@ -13,22 +13,22 @@ export default function ItemsList() {
   const [numColumns, setNumColumns] = useState(3);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const { shoppingListSelectedItems, setShoppingListSelectedItems } = useGlobal();
+  const { shoppingListAddedItems, setShoppingListAddedItems } = useGlobal();
 
-  const toggleItem = (index) => {
-    const newItems = selectedItems.includes(index)
-      ? selectedItems.filter((item) => item !== index)
-      : [...selectedItems, index];
+  const toggleItem = (id) => {
+    const newItems = selectedItems.includes(id)
+      ? selectedItems.filter((temp) => temp !== id)
+      : [...selectedItems, id];
     setSelectedItems(newItems);
   };
 
   const handleAddItems = () => {
-    setShoppingListSelectedItems(selectedItems);
+    setShoppingListAddedItems(selectedItems);
     router.back();
   }
 
   useEffect(() => {
-    setSelectedItems(shoppingListSelectedItems);
+    setSelectedItems(shoppingListAddedItems);
     const calculateColumns = () => {
       const screenWidth = Dimensions.get('window').width - 45;
       const itemWidth = 100;
@@ -70,11 +70,11 @@ export default function ItemsList() {
         numColumns={numColumns}
         renderItem={({ item, index }) => (
           <TouchableOpacity
-            onPress={() => toggleItem(index)}
+            onPress={() => toggleItem(item.id)}
             activeOpacity={1}
           >
-            <View style={[globalStyle.itemContainer, { transform: selectedItems.includes(index) ? [{ scale: 1 }] : [{ scale: 0.925 }] }]}>
-              <Item item={item} isToggled={selectedItems.includes(index)} />
+            <View style={[globalStyle.itemContainer, { transform: selectedItems.includes(item.id) ? [{ scale: 1 }] : [{ scale: 0.925 }] }]}>
+              <Item item={item} isToggled={selectedItems.includes(item.id)} />
             </View>
           </TouchableOpacity>
         )}
