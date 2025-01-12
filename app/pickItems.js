@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import globalStyle from '../styles/globalStyle';
-import { items } from '../data/items_list'; 
+import { items, getItems } from '../data/items_list'; 
 import Item from './components/item';
-import { useNavigation, router } from 'expo-router';
+import { useNavigation, router, useLocalSearchParams } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import { useGlobal } from '../utils/globalProvider';
+import { getDayNumber } from '../utils/dateManager';
+import uuid from 'uuid-random';
 
 export default function PickItems() {
   const navigation = useNavigation();
+  const params = useLocalSearchParams();
+
   const [numColumns, setNumColumns] = useState(3);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const { shoppingListAddedItems, setShoppingListAddedItems } = useGlobal();
+  const { shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket } = useGlobal(); 
+  const { mode } = params;
 
   const toggleItem = (id) => {
     const newItems = selectedItems.includes(id)
@@ -22,12 +27,41 @@ export default function PickItems() {
   };
 
   const handleAddItems = () => {
-    setShoppingListAddedItems(selectedItems);
+    if (mode == 'shoppingList'){
+      setShoppingListAddedItems(selectedItems);
+    }
+    else {
+      let tempItems = getItems(selectedItems); 
+      tempItems = tempItems.map((item) => {
+        return {
+          ...item,
+          id: uuid(),
+          date: getDayNumber(),
+        };
+      });
+      switch (mode) {
+        case 'fridge':
+          setFridge([...fridge, ...tempItems]);
+          break;
+        case 'freezer':
+          setFreezer([...freezer, ...tempItems]);
+          break;
+        case 'basket':
+          setBasket([...basket, ...tempItems]);
+          break;
+        default:
+          break;
+      }
+    }
     router.back();
+
   }
 
   useEffect(() => {
-    setSelectedItems(shoppingListAddedItems);
+    console.log('mode', mode);
+    if (mode == 'shoppingList'){
+      setSelectedItems(shoppingListAddedItems);
+    }
     const calculateColumns = () => {
       const screenWidth = Dimensions.get('window').width - 45;
       const itemWidth = 100;
@@ -47,8 +81,25 @@ export default function PickItems() {
   }, []);
 
   useLayoutEffect(() => {
+    let title = 'Add Items';
+    switch (mode) {
+      case 'fridge':
+        title = 'Add Items to Fridge';
+        break;
+      case 'freezer':
+        title = 'Add Items to Freezer';
+        break;
+      case 'basket':
+        title = 'Add Items to Basket';
+        break;
+      case 'shoppingList':
+        title = 'Add Items to Shopping List';
+        break;
+      default:
+        break;
+    }
     navigation.setOptions({
-      headerTitle: selectedItems.length == 0 ? 'Add Items' : `${selectedItems.length} Items Selected`,
+      headerTitle: selectedItems.length == 0 ? title : `${selectedItems.length} Items Selected`,
       headerRight: () => (
         <TouchableOpacity
           style={{ margin: 15 }}
@@ -73,7 +124,7 @@ export default function PickItems() {
             activeOpacity={1}
           >
             <View style={[globalStyle.itemContainer, { transform: selectedItems.includes(item.id) ? [{ scale: 1 }] : [{ scale: 0.925 }] }]}>
-              <Item item={item} isToggled={selectedItems.includes(item.id)} />
+              <Item item={item} isToggled={selectedItems.includes(item.id)} isToggeable={true} />
             </View>
           </TouchableOpacity>
         )}

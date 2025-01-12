@@ -84,7 +84,7 @@ useEffect(() => {
         />
       </GestureHandlerRootView>
 
-      <TouchableOpacity onPress={() =>router.push({ pathname:'/pickItems' })}>
+      <TouchableOpacity onPress={() =>router.push({ pathname:'/pickItems', params: {mode: 'shoppingList'} })}>
         <LinearGradient
           colors={['#B3F9CC', '#12E25B']} // Gradient colors
           start={{ x: 0, y: 0 }}

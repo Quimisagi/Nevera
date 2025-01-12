@@ -7,14 +7,16 @@ import { FontAwesome6 } from '@expo/vector-icons';
 
 
 
-export default function Item({ item, isToggled }) {
+export default function Item({ item, isToggled, isToggeable = false}) {
   return (
     <View style={styles.container}>
       <View style={globalStyle.row}>
         <View style={{ flex: 3 }}/>
-        <View style={[globalStyle.centered, styles.selectCircle, isToggled ? styles.selected : styles.unselected]}>
-          {isToggled && <FontAwesome6 style={{marginLeft: 0.5}} name="check" size={15} color="white" />}
-        </View>
+        {isToggeable ? (
+          <View style={[globalStyle.centered, styles.selectCircle, isToggled ? styles.selected : styles.unselected]}>
+            {isToggled && <FontAwesome6 style={{ marginLeft: 0.5 }} name="check" size={15} color="white" />}
+          </View>
+        ) : null}
       </View>
       <Image source={item.icon} style={[ globalStyle.element, { width: 50, height: 50, marginTop: 20 } ]} />
       <View style={[ globalStyle.element, globalStyle.centered ]}>
@@ -51,12 +53,12 @@ const styles = StyleSheet.create({
   },
   unselected: {
     backgroundColor: '#ADADAD',
-        borderRadius: 10,
+    borderRadius: 10,
 
   },
   selected: {
     backgroundColor: '#34D585',
-        borderRadius: 10,
+    borderRadius: 10,
 
   },
 });
