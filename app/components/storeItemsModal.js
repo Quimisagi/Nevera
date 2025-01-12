@@ -7,14 +7,44 @@ import { FlatList } from 'react-native-gesture-handler';
 import Item from './item';
 import { items_list, getItems } from '../../data/items_list';
 import { MaterialCommunityIcons, Fontisto, Ionicons } from '@expo/vector-icons';
+import { useGlobal } from '../../utils/globalProvider';
 
-export default function StoreItemsModal({ isVisible, onClose, selectedItems }) {
-  const [items, setItems] = useState([]);
+export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds }) {
+  const [purchasedItems, setPurchasedItems] = useState(getItems(purchasedItemIds));
+  const [selectedItems, setSelectedItems] = useState([]);
+  const { fridge, setFridge, freezer, setFreezer, basket, setBasket, setShoppingListAddedItems } = useGlobal();
+  
+  const toggleItem = (id) => {
+    const newItems = selectedItems.includes(id)
+      ? selectedItems.filter((temp) => temp !== id)
+      : [...selectedItems, id];
+    setSelectedItems(newItems);
+  };
+
+  const sendTo = (destination) => {
+    switch (destination) {
+      case 'fridge':
+        setFridge([...fridge, ...selectedItems]);
+        break;
+      case 'freezer':
+        setFreezer([...freezer, ...selectedItems]);
+        break;
+      case 'basket':
+        setBasket([...basket, ...selectedItems]);
+        break;
+      default:
+        break;
+    }
+    const newPurchasedItems = purchasedItems.filter((item) => !selectedItems.includes(item.id));
+    setSelectedItems([]);
+    setPurchasedItems(newPurchasedItems);
+    setShoppingListAddedItems(newPurchasedItems.map((item) => item.id));
+  }
 
   useEffect(() => {
-    setItems(getItems(selectedItems));
+    setPurchasedItems(getItems(purchasedItemIds));
   }
-    , [selectedItems]);
+    , [purchasedItemIds]);
 
   return (
     <View>
@@ -22,28 +52,41 @@ export default function StoreItemsModal({ isVisible, onClose, selectedItems }) {
         <View style={globalStyle.modal}>
           <View style={globalStyle.centered}>
             <FlatList
-              data={items}
+              data={purchasedItems}
               numColumns={3}
               renderItem={({ item, index }) => (
-                <View style={{transform: [{ scale: 0.8 }], margin: -13}}>
-                  <Item item={item} />
-                </View>
+                <TouchableOpacity 
+                  onPress={()=> toggleItem(item.id)} 
+                  style={{transform: selectedItems.includes(item.id) ? [{ scale: 0.85 }] : [{scale: 0.75}], margin: -13}}
+                  activeOpacity={1}
+                >
+                  <Item item={item} isToggled={selectedItems.includes(item.id)} />
+                </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
             />
           </View>
           <View style={[globalStyle.row, globalStyle.element, {marginTop: 10}]}>
-            <TouchableOpacity style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity 
+              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}
+              onPress={() => sendTo('fridge')}
+            >
               <MaterialCommunityIcons name="fridge" size={24} color="black" />
               <Text style={globalStyle.h4}>Send to fridge</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity 
+              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}
+              onPress={() => sendTo('freezer')}
+            >
               <Fontisto name="snowflake" size={24} color="black" />
               <Text style={globalStyle.h4}>Send to freezer</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity 
+              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center' }}
+              onPress={() => sendTo('basket')}
+            >
               <Ionicons name="basket" size={24} color="black" />
               <Text style={globalStyle.h4}>Send to basket</Text>
             </TouchableOpacity>

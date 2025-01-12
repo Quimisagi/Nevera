@@ -80,7 +80,7 @@ useEffect(() => {
         <StoreItemsModal 
           isVisible={showModal} 
           onClose={() => setShowModal(false)}
-          selectedItems={selectedItems} 
+          purchasedItemIds={selectedItems} 
         />
       </GestureHandlerRootView>
 
