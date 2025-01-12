@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: 110,
     maxWidth: 110,
+    maxHeight: 150,
     alignItems: 'center',
     justifyContent: 'center',
   },

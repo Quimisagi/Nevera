@@ -8,6 +8,9 @@ import Item from './item';
 import { items_list, getItems } from '../../data/items_list';
 import { MaterialCommunityIcons, Fontisto, Ionicons } from '@expo/vector-icons';
 import { useGlobal } from '../../utils/globalProvider';
+import {getDayNumber} from '../../utils/dateManager';
+import uuid from 'uuid-random';
+
 
 export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds }) {
   const [purchasedItems, setPurchasedItems] = useState(getItems(purchasedItemIds));
@@ -22,15 +25,23 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds }
   };
 
   const sendTo = (destination) => {
+    let tempItems = getItems(selectedItems);
+    tempItems = tempItems.map((item) => {
+      return {
+        ...item,
+        id: uuid(),
+        date: getDayNumber(),
+      };
+    });
     switch (destination) {
       case 'fridge':
-        setFridge([...fridge, ...selectedItems]);
+        setFridge([...fridge, ...tempItems]);
         break;
       case 'freezer':
-        setFreezer([...freezer, ...selectedItems]);
+        setFreezer([...freezer, ...tempItems]);
         break;
       case 'basket':
-        setBasket([...basket, ...selectedItems]);
+        setBasket([...basket, ...tempItems]);
         break;
       default:
         break;
