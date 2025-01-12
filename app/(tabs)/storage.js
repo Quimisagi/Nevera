@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import { router, useNavigation } from 'expo-router';
 import globalStyle from '../../styles/globalStyle';
 import { useGlobal } from '../../utils/globalProvider';
@@ -12,54 +12,63 @@ export default function Storage() {
   const navigation = useNavigation();
 
   const { fridge, freezer, basket } = useGlobal();
+
+  const [numColumns, setNumColumns] = useState(3);
+
+  useEffect(() => {
+    const calculateColumns = () => {
+      const screenWidth = Dimensions.get('window').width - 45;
+      const itemWidth = 100;
+      return Math.floor(screenWidth / itemWidth);
+    };
+
+    const handleDimensionsChange = () => {
+      setNumColumns(calculateColumns());
+    };
+
+    setNumColumns(calculateColumns());
+    const subscription = Dimensions.addEventListener('change', handleDimensionsChange);
+
+    return () => {
+      subscription?.remove();
+    };
+  }, [navigation]);
+
+  const renderHeader = (title, icon, mode) => (
+    <View style={[ globalStyle.row, {marginTop: 25}]}>
+      {icon}
+      <Text style={[globalStyle.h2, { marginLeft: 10 }]}>{title}</Text>
+      <TouchableOpacity onPress={() => router.push({ pathname: '/pickItems', params: { mode } })}>
+        <Text style={[globalStyle.h4, { marginLeft: 10, color: '#34D585' }]}>Add</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderSection = (data, title, icon, mode) => (
+    <>
+      {renderHeader(title, icon, mode)}
+      <FlatList
+        data={data}
+        renderItem={({ item }) => <Item item={item} />}
+        keyExtractor={(_, index) => index.toString()}
+        numColumns={numColumns}
+      />
+    </>
+  );
+
+  const sections = [
+    { data: fridge, title: 'Fridge', icon: <MaterialCommunityIcons name="fridge" size={24} color="black" />, mode: 'fridge' },
+    { data: freezer, title: 'Freezer', icon: <Fontisto name="snowflake" size={24} color="black" />, mode: 'freezer' },
+    { data: basket, title: 'Basket', icon: <Ionicons name="basket" size={24} color="black" />, mode: 'basket' },
+  ];
+
   return (
-    <ScrollView>
-      <View style={globalStyle.mainContainer}>
-        <View style={globalStyle.row}>
-          <MaterialCommunityIcons name="fridge" size={24} color="black" />
-          <Text style={[ globalStyle.h2, {marginLeft: 10} ]}>Fridge</Text>
-          <TouchableOpacity onPress={()=> router.push({pathname: '/pickItems', params: {mode: 'fridge'}})}>
-            <Text style={[ globalStyle.h4, {marginLeft: 10, color: '#34D585'}]}>Add</Text>
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          data={fridge}
-          renderItem={({ item }) => (
-            <Item item={item} />
-          )}
-          keyExtractor={(item) => item.toString()}
-        />
-        <View style={globalStyle.row}>
-          <Fontisto name="snowflake" size={24} color="black" />
-          <Text style={[ globalStyle.h2, {marginLeft: 10} ]}>Freezer</Text>
-          <TouchableOpacity onPress={()=> router.push({pathname: '/pickItems', params: {mode: 'freezer'}})}>
-            <Text style={[ globalStyle.h4, {marginLeft: 10, color: '#34D585'}]}>Add</Text>
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          data={freezer}
-          key = {item => item.instanceId} 
-          renderItem={({ item }) => (
-            <Item item={item} />
-          )}
-          keyExtractor={(item) => item.instanceId.toString()}
-        />
-        <View style={globalStyle.row}>
-          <Ionicons name="basket" size={24} color="black" />
-          <Text style={[ globalStyle.h2, {marginLeft: 10} ]}>Basket</Text>
-          <TouchableOpacity onPress={()=> router.push({pathname: '/pickItems', params: {mode: 'basket'}})}>
-            <Text style={[ globalStyle.h4, {marginLeft: 10, color: '#34D585'}]}>Add</Text>
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          data={basket}
-          renderItem={({ item }) => (
-            <Item item={item} />
-          )}
-          keyExtractor={(item) => item.toString()}
-        />
-      </View>
-    </ScrollView>
+    <View style={globalStyle.mainContainer}>
+      <FlatList
+        data={sections}
+        renderItem={({ item }) => renderSection(item.data, item.title, item.icon, item.mode)}
+        keyExtractor={(item) => item.mode}
+    />
+    </View>
   );
 }
-
