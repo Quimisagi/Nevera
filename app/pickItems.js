@@ -2,13 +2,12 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import globalStyle from '../styles/globalStyle';
 import { items } from '../data/items_list'; 
-import { Image } from 'expo-image';
 import Item from './components/item';
 import { useNavigation, router } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import { useGlobal } from '../utils/globalProvider';
 
-export default function ItemsList() {
+export default function PickItems() {
   const navigation = useNavigation();
   const [numColumns, setNumColumns] = useState(3);
   const [selectedItems, setSelectedItems] = useState([]);

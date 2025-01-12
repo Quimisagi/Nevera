@@ -6,7 +6,7 @@ import { Image } from 'expo-image';
 import globalStyle from '../../styles/globalStyle';
 import { CheckBox } from 'react-native-elements';
 
-export default function ShoppingListItem( { item, onChecked } ) {
+export default function ShoppingAvailableItem( { item, onChecked } ) {
   const [isChecked, setIsChecked] = useState(false);
 
   function handleChecked(id) {

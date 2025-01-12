@@ -3,7 +3,7 @@ import { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, TouchableOpacity, FlatList } from 'react-native';
 import globalStyle from '../../styles/globalStyle';
 import Item from '../components/item';
-import ShoppingListItem from '../components/shoppingListItem'; 
+import ShoppingAvailableItem from '../components/shoppingAvailableItem'; 
 import { items, getItems } from '../../data/items_list'; 
 import { Link } from 'expo-router';
 import { useNavigation, router } from "expo-router";
@@ -18,13 +18,9 @@ export default function ShoppingList() {
   const navigation = useNavigation();
   const { shoppingListAddedItems } = useGlobal();
 
-  const [addedItems, setAddedItems] = useState();
+  const [availableItems, setAvailableItems] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
-
-  const renderShoppingListItem = ({ index }) => (
-    <ShoppingListItem key={index.toString()} item={addedItems[index]} onChecked={(id) => toggleItem(id)} />
-  );
 
   const toggleItem = (newId) => {
     const newItems = selectedItems.includes(newId)
@@ -35,16 +31,18 @@ export default function ShoppingList() {
 
 useEffect(() => {
   const temp = getItems(shoppingListAddedItems); 
-  setAddedItems(temp);
+  setAvailableItems(temp);
 }, [navigation, shoppingListAddedItems, items]);
 
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
+        shoppingListAddedItems.length > 0 &&
         <TouchableOpacity
-          style={{ margin: 15, padding: 5 }}
+          style={{ margin: 15, padding: 5, opacity: selectedItems.length == 0 ? 0.35 : 1 }}
           onPress={() => setShowModal(true)}
+          disabled={selectedItems.length == 0}
         >
           <View style={[ globalStyle.row, globalStyle.centered ]}>
             <Ionicons name="bag-check-outline" size={24} color="black" />
@@ -54,7 +52,7 @@ useEffect(() => {
       ),
 
     });
-  }, [navigation, shoppingListAddedItems]);
+  }, [navigation, shoppingListAddedItems, selectedItems]);
 
 
   return (
@@ -67,8 +65,13 @@ useEffect(() => {
       )
       }
       <FlatList
-        data={shoppingListAddedItems}
-        renderItem={renderShoppingListItem}
+        data={availableItems}
+        renderItem={({ item }) => (
+          <ShoppingAvailableItem
+            item={item}
+            onChecked={toggleItem}
+          />
+        )}
         keyExtractor={(item, index) => index.toString()} // Unique key for each item
         contentContainerStyle={{ paddingVertical: 10 }} // Optional styling
       />
@@ -81,7 +84,7 @@ useEffect(() => {
         />
       </GestureHandlerRootView>
 
-      <TouchableOpacity onPress={() =>router.push({ pathname:'/itemsList' })}>
+      <TouchableOpacity onPress={() =>router.push({ pathname:'/pickItems' })}>
         <LinearGradient
           colors={['#B3F9CC', '#12E25B']} // Gradient colors
           start={{ x: 0, y: 0 }}
