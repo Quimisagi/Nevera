@@ -8,7 +8,6 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useGlobal } from '../utils/globalProvider';
 import { getDayNumber } from '../utils/dateManager';
 import uuid from 'uuid-random';
-import CreateItemModal from './components/createItemModal';
 
 export default function PickItems() {
   const navigation = useNavigation();
@@ -16,8 +15,6 @@ export default function PickItems() {
 
   const [numColumns, setNumColumns] = useState(3);
   const [selectedItems, setSelectedItems] = useState([]);
-
-  const [createItemModalVisible, setCreateItemModalVisible] = useState(false);
 
   const { shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket, items } = useGlobal();
   const { mode } = params;
@@ -120,7 +117,7 @@ export default function PickItems() {
     <View style={globalStyle.mainContainer}>
       <FlatList
         ListHeaderComponent={
-          <TouchableOpacity style={globalStyle.button} onPress={() => setCreateItemModalVisible(true)}>
+          <TouchableOpacity style={globalStyle.button} onPress={() => router.push('/createItem')}>
             <View style={[ globalStyle.row, globalStyle.element ]}>
               <AntDesign name="plus" size={24} color="#11D054" />
               <Text style={[ globalStyle.h4, {color: '#11D054', marginLeft: 10} ]}>Create New Item</Text>
@@ -142,7 +139,6 @@ export default function PickItems() {
         )}
         contentContainerStyle={globalStyle.centered}
       />
-      <CreateItemModal isVisible={createItemModalVisible} onClose={() => setCreateItemModalVisible(false)} />
     </View>
   );
 }

@@ -67,6 +67,7 @@ const globalStyle = StyleSheet.create({
     position: 'absolute',
     zIndex: 10, 
     padding: 30,
+    maxHeight: '95%',
   },
 
   addButton: {
