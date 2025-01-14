@@ -4,12 +4,15 @@ const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
 
+  const [items, setItems] = useState([]);
   const [shoppingListAddedItems, setShoppingListAddedItems] = useState([]);
   const [fridge, setFridge] = useState([]);
   const [freezer, setFreezer] = useState([]);
   const [basket, setBasket] = useState([]);
 
   const globalState = {
+    items,
+    setItems,
     shoppingListAddedItems,
     setShoppingListAddedItems,
     fridge,

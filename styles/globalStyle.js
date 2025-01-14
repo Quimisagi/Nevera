@@ -18,7 +18,17 @@ const globalStyle = StyleSheet.create({
     textAlign: "center",
   },
   element: {
-    margin: 2.5,
+    margin: 3,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginHorizontal: 15,
+    marginTop: 10,
+    marginBottom: 5,
   },
 
   row: {
@@ -41,6 +51,12 @@ const globalStyle = StyleSheet.create({
   baseText: {
     fontFamily: 'PlusJakartaSans',
     fontSize: 15,
+  },
+  minorText: {
+    fontFamily: 'PlusJakartaSans',
+    fontSize: 12,
+    color: '#777',
+    textAlign: 'center',
   },
   modal: {
     backgroundColor: '#ffffff',

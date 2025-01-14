@@ -2,8 +2,8 @@ import uuid from 'uuid-random';
 
 const id = uuid();
 
-export function getItems(listOfItems){
-  const temp = listOfItems.map((id) => {
+export function getItems(itemsIds, items){
+  const temp = itemsIds.map((id) => {
     const item = Object.values(items).find((item) => item.id === id); 
     return item ? item : null; 
   }).filter(item => item !== null);  
@@ -12,7 +12,7 @@ export function getItems(listOfItems){
 
 
 
-export const items = [
+export const defaultItems = [
   {
     id: uuid(),
     name: "bread",

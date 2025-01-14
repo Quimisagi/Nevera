@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Text, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import globalStyle from '../styles/globalStyle';
-import { items, getItems } from '../data/items_list'; 
+import { getItems } from '../data/items_list'; 
 import Item from './components/item';
 import { useNavigation, router, useLocalSearchParams } from 'expo-router';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useGlobal } from '../utils/globalProvider';
 import { getDayNumber } from '../utils/dateManager';
 import uuid from 'uuid-random';
+import CreateItemModal from './components/createItemModal';
 
 export default function PickItems() {
   const navigation = useNavigation();
@@ -16,7 +17,9 @@ export default function PickItems() {
   const [numColumns, setNumColumns] = useState(3);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const { shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket } = useGlobal(); 
+  const [createItemModalVisible, setCreateItemModalVisible] = useState(false);
+
+  const { shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket, items } = useGlobal();
   const { mode } = params;
 
   const toggleItem = (id) => {
@@ -31,7 +34,7 @@ export default function PickItems() {
       setShoppingListAddedItems(selectedItems);
     }
     else {
-      let tempItems = getItems(selectedItems); 
+      let tempItems = getItems(selectedItems, items); 
       tempItems = tempItems.map((item) => {
         return {
           ...item,
@@ -58,7 +61,6 @@ export default function PickItems() {
   }
 
   useEffect(() => {
-    console.log('mode', mode);
     if (mode == 'shoppingList'){
       setSelectedItems(shoppingListAddedItems);
     }
@@ -101,12 +103,14 @@ export default function PickItems() {
     navigation.setOptions({
       headerTitle: selectedItems.length == 0 ? title : `${selectedItems.length} Items Selected`,
       headerRight: () => (
-        <TouchableOpacity
-          style={{ margin: 15 }}
-          onPress={handleAddItems}
-        >
-          <AntDesign name="check" size={24} color="black" />
-        </TouchableOpacity>
+        selectedItems.length > 0 && (
+          <TouchableOpacity
+            style={{ margin: 15 }}
+            onPress={handleAddItems}
+          >
+            <AntDesign name="check" size={24} color="black" />
+          </TouchableOpacity>
+        )
       ),
 
     });
@@ -115,6 +119,14 @@ export default function PickItems() {
   return (
     <View style={globalStyle.mainContainer}>
       <FlatList
+        ListHeaderComponent={
+          <TouchableOpacity style={globalStyle.button} onPress={() => setCreateItemModalVisible(true)}>
+            <View style={[ globalStyle.row, globalStyle.element ]}>
+              <AntDesign name="plus" size={24} color="#11D054" />
+              <Text style={[ globalStyle.h4, {color: '#11D054', marginLeft: 10} ]}>Create New Item</Text>
+            </View>
+          </TouchableOpacity>
+        }
         data={items}
         keyExtractor={(item, index) => item.id || index.toString()} // Adjust key extractor
         numColumns={numColumns}
@@ -130,6 +142,7 @@ export default function PickItems() {
         )}
         contentContainerStyle={globalStyle.centered}
       />
+      <CreateItemModal isVisible={createItemModalVisible} onClose={() => setCreateItemModalVisible(false)} />
     </View>
   );
 }

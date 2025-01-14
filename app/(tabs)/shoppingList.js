@@ -4,7 +4,7 @@ import { Text, View, TouchableOpacity, FlatList } from 'react-native';
 import globalStyle from '../../styles/globalStyle';
 import Item from '../components/item';
 import ShoppingAvailableItem from '../components/shoppingAvailableItem'; 
-import { items, getItems } from '../../data/items_list'; 
+import { getItems } from '../../data/items_list'; 
 import { Link } from 'expo-router';
 import { useNavigation, router } from "expo-router";
 import { useGlobal } from '../../utils/globalProvider';
@@ -16,7 +16,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function ShoppingList() {
   const navigation = useNavigation();
-  const { shoppingListAddedItems } = useGlobal();
+  const { shoppingListAddedItems, items } = useGlobal();
 
   const [availableItems, setAvailableItems] = useState();
   const [selectedItems, setSelectedItems] = useState([]);
@@ -30,7 +30,7 @@ export default function ShoppingList() {
   };
 
 useEffect(() => {
-  const temp = getItems(shoppingListAddedItems); 
+  const temp = getItems(shoppingListAddedItems, items); 
   setAvailableItems(temp);
 }, [navigation, shoppingListAddedItems, items]);
 
@@ -86,7 +86,7 @@ useEffect(() => {
 
       <TouchableOpacity onPress={() =>router.push({ pathname:'/pickItems', params: {mode: 'shoppingList'} })}>
         <LinearGradient
-          colors={['#B3F9CC', '#12E25B']} // Gradient colors
+          colors={['#D0EEBE', '#11D054']} // Gradient colors
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{   
@@ -103,7 +103,7 @@ useEffect(() => {
           }}
         >
           <Ionicons
-            name="add-circle-outline"
+            name="add"
             size={50}
             color={'#FFF'}
           />
