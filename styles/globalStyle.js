@@ -80,6 +80,14 @@ const globalStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  button: {
+    backgroundColor: '#11D054',
+    padding: 10,
+    borderRadius: 10,
+    margin: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
 });
 

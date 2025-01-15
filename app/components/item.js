@@ -20,8 +20,8 @@ export default function Item({ item, isToggled, isToggeable = false}) {
       </View>
       <Image source={item.icon} style={[ globalStyle.element, { width: 50, height: 50, marginTop: 20 } ]} />
       <View style={[ globalStyle.element, globalStyle.centered ]}>
-        <Text style={globalStyle.h4}>{item.name}</Text>
-        <Text>{item.time}</Text>
+        <Text style={[ globalStyle.h4, {marginBottom: 10} ]}>{item.name}</Text>
+        {/* <Text>{item.time}</Text> */}
       </View>
     </View>
   );

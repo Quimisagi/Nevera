@@ -1,7 +1,6 @@
 import React from 'react';
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useLayoutEffect} from 'react';
 import { Text, View, TouchableOpacity, TextInput, FlatList, Image } from 'react-native';
-import Modal from "react-native-modal";
 import globalStyle from '../styles/globalStyle';
 import { useGlobal } from '../utils/globalProvider';
 import {getDayNumber} from '../utils/dateManager';
@@ -10,12 +9,14 @@ import { MaterialCommunityIcons, Fontisto, Ionicons } from '@expo/vector-icons';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import iconPaths from '../data/iconPaths';
 import ItemModal from './components/itemModal';
+import { useNavigation, router } from 'expo-router';
+import { AntDesign } from '@expo/vector-icons';
 
 
 export default function CreateItem() {
   const { setItems } = useGlobal(); 
   const [name, setName] = useState('');
-  const [icon, setIcon] = useState('');
+  const [icon, setIcon] = useState(require("/home/quimisagi/Projects/Nevera/assets/icons/kawaii-bread.png"));
   const [fridgeTime, setFridgeTime] = useState(0);
   const [freezerTime, setFreezerTime] = useState(0);
   const [basketTime, setBasketTime] = useState(0);
@@ -23,12 +24,7 @@ export default function CreateItem() {
 
   const [isModalVisible, setIsModalVisible] = useState(false);  
 
-  const handleCreateItem = () => {
-    const newItem = { name, icon, fridgeTime, freezerTime, basketTime, addedDate };
-    setItems((prevItems) => [...prevItems, newItem]);
-    onClose(); 
-    clearForm();
-  };
+  const navigation = useNavigation();
 
   const clearForm = () => {
     setName('');
@@ -52,11 +48,45 @@ export default function CreateItem() {
     });
   };
 
+  const createItem = () => {
+    const newItem = {
+      id: uuid(),
+      name,
+      icon,
+      fridgeTime,
+      freezerTime,
+      basketTime,
+      // addedDate,
+    };
+    setItems((prevItems) => [...prevItems, newItem]);
+    clearForm();
+    router.back();
+  };
+
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: 'Create Item',
+      headerRight: () => (
+        <TouchableOpacity
+          style={{
+            margin: 15,
+            ...( !name ? { opacity: 0.5 } : {} ) // Use spread operator for conditional styles
+          }}
+          disabled={!name}
+          onPress={createItem}
+        >
+          <AntDesign name="check" size={24} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  } , [navigation, name, icon, fridgeTime, freezerTime, basketTime, addedDate]);
+
   return (
-    <View>
-      <View style={globalStyle.row}>
-        <TouchableOpacity style={{flex : 1 }} onPress={() => setIsModalVisible(true)}>
-          <Image source={iconPaths['pie']} style={{ width: 50, height: 50 }} />
+    <View style={globalStyle.mainContainer}>
+      <View style={[ globalStyle.row, {marginTop : 10} ]}>
+        <TouchableOpacity style={{flex : 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => setIsModalVisible(true)}>
+          <Image source={icon} style={{ width: 50, height: 50 }} />
         </TouchableOpacity>
         <View style={{flex: 3}}>
           <Text>Item Name</Text>
@@ -68,16 +98,16 @@ export default function CreateItem() {
           />
         </View>
       </View>
-      <Text style={[globalStyle.h4, {marginTop:20}]}>Added Date</Text>
-      <TouchableOpacity
-        style={globalStyle.input}
-        onPress={() => showDatepicker()}
-      >
-        <Text>{addedDate.toDateString()}</Text>
-      </TouchableOpacity>
-      <Text style={[ globalStyle.h4, {marginTop:20} ]}>Storage Duration</Text>
+      {/* <Text style={[globalStyle.h4, {marginTop:20}]}>Added Date</Text> */}
+      {/* <TouchableOpacity */}
+      {/*   style={globalStyle.input} */}
+      {/*   onPress={() => showDatepicker()} */}
+      {/* > */}
+      {/*   <Text>{addedDate.toDateString()}</Text> */}
+      {/* </TouchableOpacity> */}
+      <Text style={[ globalStyle.h4, {marginTop:30} ]}>Storage Duration</Text>
 
-      <View style={[globalStyle.row, globalStyle.element, { marginTop: 20 }]}>
+      <View style={[globalStyle.row, globalStyle.element, { marginTop: 30 }]}>
         <View style={{ flex: 1 }}>
           <MaterialCommunityIcons
             name="fridge"
@@ -126,8 +156,7 @@ export default function CreateItem() {
           <Text style={globalStyle.minorText}>Days</Text>
         </View>
       </View>
-      <TouchableOpacity title="Create Item" onPress={handleCreateItem} />
-      <ItemModal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)} setSelectedIcon={setIcon} />
+      <ItemModal isVisible={isModalVisible} onClose={() => setIsModalVisible(false)} icon={icon} setIcon={setIcon}/>
     </View>
-);
+  );
 }

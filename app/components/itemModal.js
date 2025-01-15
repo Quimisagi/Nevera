@@ -6,8 +6,7 @@ import globalStyle from '../../styles/globalStyle';
 import iconPaths from '../../data/iconPaths';
 
 
-export default function IconModal({ isVisible, onClose }) {
-  const [icon, setIcon] = useState('apple');
+export default function IconModal({ isVisible, onClose, icon, setIcon }) {
   const [filteredIcons, setFilteredIcons] = useState(Object.entries(iconPaths)); // Initial state with all icons
 
   // Filter icons based on input
@@ -27,7 +26,7 @@ export default function IconModal({ isVisible, onClose }) {
     <View>
       <Modal isVisible={isVisible} onBackdropPress={onClose}>
         <View style={globalStyle.modal}>
-          <View style={{flex : 1, maxHeight: '95%'}}>
+          <View style={{flex : 1, maxHeight: '100%', marginTop: 55}}>
             <Text style={[globalStyle.h2, { marginTop: 20 }]}>Choose an Icon</Text>
             <TextInput
               placeholder="Search icons..."
@@ -35,7 +34,7 @@ export default function IconModal({ isVisible, onClose }) {
               onChangeText={handleSearch}
               style={[globalStyle.input, { marginBottom: 22.5 }]}
             />
-            <View style={{ maxHeight: '90%' }}>
+            <View style={{ maxHeight: '85%' }}>
               <FlatList
                 data={filteredIcons} // Use filtered icons
                 numColumns={5}
@@ -53,6 +52,9 @@ export default function IconModal({ isVisible, onClose }) {
                 keyExtractor={(_, index) => index.toString()} // Use index as key
                 contentContainerStyle={globalStyle.centered}
               />
+              <TouchableOpacity onPress={onClose} style={[globalStyle.button, { marginTop: 40 }]}>
+                <Text style={[globalStyle.h4, { color: 'white' }]}>Close</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
