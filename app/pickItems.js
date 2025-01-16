@@ -114,13 +114,13 @@ export default function PickItems() {
   }, [selectedItems]);
 
   return (
-    <View style={globalStyle.mainContainer}>
+    <View style={[globalStyle.mainContainer, globalStyle.secondaryContainer]}>
       <FlatList
         ListHeaderComponent={
-          <TouchableOpacity style={globalStyle.button} onPress={() => router.push('/createItem')}>
+          <TouchableOpacity style={[ globalStyle.button, {marginBottom: 10} ]} onPress={() => router.push('/createItem')}>
             <View style={[ globalStyle.row, globalStyle.element ]}>
-              <AntDesign name="plus" size={24} color="#11D054" />
-              <Text style={[ globalStyle.h4, {color: '#11D054', marginLeft: 10} ]}>Create New Item</Text>
+              <AntDesign name="plus" size={24} color="white" />
+              <Text style={[ globalStyle.h4, {color: 'white', marginLeft: 10} ]}>Create New Item</Text>
             </View>
           </TouchableOpacity>
         }

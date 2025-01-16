@@ -13,9 +13,9 @@ import uuid from 'uuid-random';
 
 
 export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds }) {
-  const [purchasedItems, setPurchasedItems] = useState(getItems(purchasedItemIds));
+  const [purchasedItems, setPurchasedItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
-  const { fridge, setFridge, freezer, setFreezer, basket, setBasket, setShoppingListAddedItems } = useGlobal();
+  const { fridge, setFridge, freezer, setFreezer, basket, setBasket, setShoppingListAddedItems, items, SetItems } = useGlobal();
   
   const toggleItem = (id) => {
     const newItems = selectedItems.includes(id)
@@ -25,7 +25,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds }
   };
 
   const sendTo = (destination) => {
-    let tempItems = getItems(selectedItems);
+    let tempItems = getItems(selectedItems, items);
     tempItems = tempItems.map((item) => {
       return {
         ...item,
@@ -53,7 +53,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds }
   }
 
   useEffect(() => {
-    setPurchasedItems(getItems(purchasedItemIds));
+    setPurchasedItems(getItems(purchasedItemIds, items));
   }
     , [purchasedItemIds]);
 

@@ -83,7 +83,7 @@ export default function CreateItem() {
   } , [navigation, name, icon, fridgeTime, freezerTime, basketTime, addedDate]);
 
   return (
-    <View style={globalStyle.mainContainer}>
+    <View style={[ globalStyle.mainContainer, globalStyle.secondaryContainer ]}>
       <View style={[ globalStyle.row, {marginTop : 10} ]}>
         <TouchableOpacity style={{flex : 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => setIsModalVisible(true)}>
           <Image source={icon} style={{ width: 50, height: 50 }} />

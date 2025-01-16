@@ -9,6 +9,7 @@ export default () => {
     <Tabs
       screenOptions={{
         showLabel: false,
+        headerShown: false,
       }}
     >
       <Tabs.Screen 

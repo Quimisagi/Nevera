@@ -10,10 +10,13 @@ import { MaterialCommunityIcons, Fontisto, Ionicons } from '@expo/vector-icons';
 
 export default function Storage() {
   const navigation = useNavigation();
-
   const { fridge, freezer, basket } = useGlobal();
-
   const [numColumns, setNumColumns] = useState(3);
+  const [expandedSections, setExpandedSections] = useState({
+    fridge: true,
+    freezer: true,
+    basket: true,
+  });
 
   useEffect(() => {
     const calculateColumns = () => {
@@ -34,12 +37,30 @@ export default function Storage() {
     };
   }, [navigation]);
 
+  const toggleSection = (section) => {
+    setExpandedSections((prevState) => ({
+      ...prevState,
+      [section]: !prevState[section],
+    }));
+  };
+
   const renderHeader = (title, icon, mode) => (
-    <View style={[ globalStyle.row, {marginTop: 25}]}>
+    <View style={[globalStyle.row, { marginTop: 25, alignItems: 'center' }]}>
+      <TouchableOpacity onPress={() => toggleSection(mode)}>
+        <MaterialCommunityIcons
+          name={expandedSections[mode] ? 'chevron-down' : 'chevron-right'}
+          size={24}
+          color="black"
+          style={{ marginRight: 5 }}
+        />
+      </TouchableOpacity>
       {icon}
       <Text style={[globalStyle.h2, { marginLeft: 10 }]}>{title}</Text>
       <TouchableOpacity onPress={() => router.push({ pathname: '/pickItems', params: { mode } })}>
-        <Text style={[globalStyle.h4, { marginLeft: 10, color: '#34D585' }]}>Add</Text>
+        <View style={globalStyle.row}>
+          <MaterialCommunityIcons name="plus" size={24} color="#34D585" style={{ marginLeft: 10 }} />
+          <Text style={[globalStyle.h4, { marginLeft: 1, color: '#34D585' }]}>Add</Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -47,12 +68,22 @@ export default function Storage() {
   const renderSection = (data, title, icon, mode) => (
     <>
       {renderHeader(title, icon, mode)}
-      <FlatList
-        data={data}
-        renderItem={({ item }) => <Item item={item} />}
-        keyExtractor={(_, index) => index.toString()}
-        numColumns={numColumns}
-      />
+      {expandedSections[mode] && (
+        <>
+          {data.length === 0 ? (
+            <Text style={[globalStyle.minorText, { marginLeft: 10, marginTop: 10, textAlign: 'left' }]}>
+              No items in {title.toLowerCase()}
+            </Text>
+          ) : (
+            <FlatList
+              data={data}
+              renderItem={({ item }) => <Item item={item} />}
+              keyExtractor={(_, index) => index.toString()}
+              numColumns={numColumns}
+            />
+          )}
+        </>
+      )}
     </>
   );
 
@@ -64,11 +95,12 @@ export default function Storage() {
 
   return (
     <View style={globalStyle.mainContainer}>
+      <Text style={globalStyle.h1}>Storage</Text>
       <FlatList
         data={sections}
         renderItem={({ item }) => renderSection(item.data, item.title, item.icon, item.mode)}
         keyExtractor={(item) => item.mode}
-    />
+      />
     </View>
   );
 }

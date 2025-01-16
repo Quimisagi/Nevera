@@ -10,7 +10,10 @@ Font.loadAsync({
 const globalStyle = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    padding: 17.5,
+    padding: 25,
+  },
+  secondaryContainer: {
+    marginTop: 50,
   },
   centered: {
     justifyContent: "center",
@@ -37,10 +40,10 @@ const globalStyle = StyleSheet.create({
   h1: {
     fontSize: 24,
     fontFamily: 'Poppins',
-    fontWeight: 'bold',
+    marginTop: 15,
   },
   h2: {
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'Poppins',
   },
   h4: {

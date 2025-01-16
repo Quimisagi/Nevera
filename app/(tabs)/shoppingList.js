@@ -60,7 +60,12 @@ useEffect(() => {
       <Text style={globalStyle.h1}>Shopping List</Text>
       {shoppingListAddedItems.length == 0 && (
         <View style={[ globalStyle.centered, { flex: 1 } ]}>
-          <Text style={globalStyle.h2}>No items selected</Text>
+          <Text style={globalStyle.h2}>No items added</Text>
+          <View style={globalStyle.row}>
+            <Text style={globalStyle.minorText}>Press the </Text>
+            <Ionicons name="add" size={18} color="gray" />
+            <Text style={globalStyle.minorText}> button to add items</Text>
+          </View>
         </View>
       )
       }
@@ -86,7 +91,7 @@ useEffect(() => {
 
       <TouchableOpacity onPress={() =>router.push({ pathname:'/pickItems', params: {mode: 'shoppingList'} })}>
         <LinearGradient
-          colors={['#D0EEBE', '#11D054']} // Gradient colors
+          colors={['#16B671', '#11D054']} // Gradient colors
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{   

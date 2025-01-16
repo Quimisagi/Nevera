@@ -1,17 +1,34 @@
 import { Stack } from "expo-router";
-import { GlobalProvider } from '../utils/globalProvider';
+import { GlobalProvider } from "../utils/globalProvider";
+import { StatusBar } from "react-native";
 
 export default function RootLayout() {
   return (
     <GlobalProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }}/>
-        <Stack.Screen 
+      <StatusBar 
+        backgroundColor="transparent" 
+        translucent 
+        barStyle="dark-content" // Change to "light-content" for light text
+      />
+      <Stack
+        screenOptions={{
+          headerTransparent: true, // For transparent headers
+          headerTitleStyle: {
+            fontFamily: "Poppins",
+            fontSize: 20,
+          },
+        }}
+      >
+        {/* Override specific screens if needed */}
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
           name="pickItems"
-          options={{ headerTitle: 'Add Items',
+          options={{
+            headerShown: true, // Show the header for this screen
+            headerTitle: "Add Items",
           }}
         />
       </Stack>
     </GlobalProvider>
-  )
+  );
 }
