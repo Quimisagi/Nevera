@@ -20,6 +20,7 @@ export default function ShoppingAvailableItem( { item, onChecked } ) {
           <CheckBox
             checked={isChecked}
             onPress={() => handleChecked(item.id)}
+            checkedColor='#16B671'
           />
           <TouchableOpacity style={[globalStyle.row, { alignItems: 'center' }]} onPress={() => handleChecked(item.id)}>
             <Image

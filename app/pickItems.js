@@ -119,7 +119,7 @@ export default function PickItems() {
         ListHeaderComponent={
           <TouchableOpacity style={[ globalStyle.button, {marginBottom: 10} ]} onPress={() => router.push('/createItem')}>
             <View style={[ globalStyle.row, globalStyle.element ]}>
-              <AntDesign name="plus" size={24} color="white" />
+              <Ionicons name="create" size={24} color="white" />
               <Text style={[ globalStyle.h4, {color: 'white', marginLeft: 10} ]}>Create New Item</Text>
             </View>
           </TouchableOpacity>
