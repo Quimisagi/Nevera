@@ -5,6 +5,7 @@ import { useRootNavigationState, Redirect } from 'expo-router';
 import 'react-native-get-random-values';
 import { defaultItems } from '../data/items_list';
 import { useGlobal } from '../utils/globalProvider';
+import * as SecureStore from 'expo-secure-store';
 
 
 export default function Index() {
@@ -14,7 +15,12 @@ export default function Index() {
   useEffect(() => {
     navigation.setOptions({headerShown: false});
     async function loadData() {
-      setItems(defaultItems);
+      let result = await SecureStore.getItemAsync('items');
+      if (result) {
+        setItems(JSON.parse(result));
+      } else {
+        setItems(defaultItems);
+      }
     }
     loadData();
 

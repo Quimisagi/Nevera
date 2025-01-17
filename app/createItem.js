@@ -12,6 +12,7 @@ import ItemModal from './components/itemModal';
 import { useNavigation, router } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
+import * as SecureStore from 'expo-secure-store';
 
 
 export default function CreateItem() {
@@ -47,25 +48,26 @@ export default function CreateItem() {
   //   });
   // };
 
-  const createItem = () => {
+async function createItem() {
     const newItem = {
-      id: uuid(),
-      name,
-      icon,
-      fridgeTime,
-      freezerTime,
-      basketTime,
-      // addedDate: getDayNumber(new Date()),
+        id: uuid(),
+        name,
+        icon,
+        fridgeTime,
+        freezerTime,
+        basketTime,
+        // addedDate: getDayNumber(new Date()),
     };
     setItems((prevItems) => [...prevItems, newItem]);
+    await SecureStore.setItemAsync('items', JSON.stringify([...prevItems, newItem]));
     clearForm();
     Toast.show({
-      type: 'success',
-      text1: 'Item created successfully',
+        type: 'success',
+        text1: 'Item created successfully',
     });
 
     router.back();
-  };
+}
 
 
   useLayoutEffect(() => {
