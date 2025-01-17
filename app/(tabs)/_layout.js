@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { Tabs } from 'expo-router';
-import { FontAwesome6, Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
+import { TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { router } from 'expo-router';
 
 export default () => {
@@ -18,11 +18,13 @@ export default () => {
           title: '',
           tabBarIcon: ({ focused }) => (
             <FontAwesome6
-              style={styles.button}
               name="house"
               size={24}
-              color={focused ? '#333333' : '#89A1A9'}
+              color={focused ? '#14A365' : '#89A1A9'}
             />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: focused ? '#14A365' : '#89A1A9', fontSize: 10 }}>Storage</Text>
           ),
         }}
       />
@@ -32,11 +34,13 @@ export default () => {
           title: '',
           tabBarIcon: ({ focused }) => (
             <FontAwesome6
-              style={styles.button}
-              name="wallet"
+              name="list-check"
               size={24}
-              color={focused ? '#333333' : '#89A1A9'}
+              color={focused ? '#14A365' : '#89A1A9'}
             />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text style={{ color: focused ? '#14A365' : '#89A1A9', fontSize: 10 }}>Shopping List</Text>
           ),
         }}
       />

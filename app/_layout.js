@@ -30,7 +30,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-      <Toast position="bottom"/>
+      <Toast/>
     </GlobalProvider>
   );
 }
