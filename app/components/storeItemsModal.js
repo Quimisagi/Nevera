@@ -15,22 +15,22 @@ import Toast from 'react-native-toast-message';
 
 export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, removeSelectedItems }) {
   const [purchasedItems, setPurchasedItems] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItemIds, setSelectedItemIds] = useState([]);
   const { fridge, setFridge, freezer, setFreezer, basket, setBasket, shoppingListAddedItems, setShoppingListAddedItems, items, SetItems } = useGlobal();
   
   const toggleItem = (id) => {
-    const newItems = selectedItems.includes(id)
-      ? selectedItems.filter((temp) => temp !== id)
-      : [...selectedItems, id];
-    setSelectedItems(newItems);
+    const newItems = selectedItemIds.includes(id)
+      ? selectedItemIds.filter((temp) => temp !== id)
+      : [...selectedItemIds, id];
+    setSelectedItemIds(newItems);
   };
 
   const selectAll = () => {
-    setSelectedItems(purchasedItems.map((item) => item.id));
+    setSelectedItemIds(purchasedItems.map((item) => item.id));
   }
 
   const sendTo = (destination) => {
-    let tempItems = getItems(selectedItems, items);
+    let tempItems = getItems(selectedItemIds, items);
     tempItems = tempItems.map((item) => {
       return {
         ...item,
@@ -51,12 +51,12 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
       default:
         break;
     }
-    const newPurchasedItems = purchasedItems.filter((item) => !selectedItems.includes(item.id));
-    const newItems = shoppingListAddedItems.filter((item) => !selectedItems.includes(item));
-    setSelectedItems([]);
-    setPurchasedItems(newPurchasedItems);
+    // const newPurchasedItems = purchasedItems.filter((item) => !selectedItemIds.includes(item.id));
+    const newItems = shoppingListAddedItems.filter((id) => !selectedItemIds.includes(id));
+    setSelectedItemIds([]);
+    // setPurchasedItems(newPurchasedItems);
     setShoppingListAddedItems(newItems.map((item) => item));
-    // removeSelectedItems(selectedItems.id);
+    // removeSelectedItems(selectedItemIds.id);
     Toast.show({
       type: 'success',
       text1: 'Items sent',
@@ -81,7 +81,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
                   <Text style={[globalStyle.h4, {color: '#16B671'}]}>Close</Text>
                 </TouchableOpacity>
               </View>
-            ) : selectedItems.length !== purchasedItems.length ? (
+            ) : selectedItemIds.length !== purchasedItems.length ? (
               <View style={[globalStyle.row, {justifyContent: 'flex-end'}]}>
                 <TouchableOpacity onPress={selectAll}>
                   <Text style={[globalStyle.h4, {color: '#16B671', marginBottom: 20}]}>Select all</Text>
@@ -89,7 +89,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
               </View>
             ) : (
               <View style={[globalStyle.row, {justifyContent: 'flex-end'}]}>
-                <TouchableOpacity onPress={() => setSelectedItems([])}>
+                <TouchableOpacity onPress={() => setSelectedItemIds([])}>
                   <Text style={[globalStyle.h4, {color: '#16B671', marginBottom: 20}]}>Unselect all</Text>
                 </TouchableOpacity>
               </View>
@@ -100,10 +100,10 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
               renderItem={({ item, index }) => (
                 <TouchableOpacity 
                   onPress={()=> toggleItem(item.id)} 
-                  style={{transform: selectedItems.includes(item.id) ? [{ scale: 0.85 }] : [{scale: 0.75}], margin: -13}}
+                  style={{transform: selectedItemIds.includes(item.id) ? [{ scale: 0.85 }] : [{scale: 0.75}], margin: -13}}
                   activeOpacity={1}
                 >
-                  <Item item={item} isToggled={selectedItems.includes(item.id)} isToggeable={true} />
+                  <Item item={item} isToggled={selectedItemIds.includes(item.id)} isToggeable={true} />
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -111,27 +111,27 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
           </View>
           <View style={[globalStyle.row, globalStyle.element, {marginTop: 10}]}>
             <TouchableOpacity 
-              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center', opacity: selectedItems.length === 0 ? 0.5 : 1 }}
+              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center', opacity: selectedItemIds.length === 0 ? 0.5 : 1 }}
               onPress={() => sendTo('fridge')}
-              disabled={selectedItems.length === 0}
+              disabled={selectedItemIds.length === 0}
             >
               <MaterialCommunityIcons name="fridge" size={24} color="black" />
               <Text style={globalStyle.h4}>Send to fridge</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center', opacity: selectedItems.length === 0 ? 0.5 : 1 }}
+              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center', opacity: selectedItemIds.length === 0 ? 0.5 : 1 }}
               onPress={() => sendTo('freezer')}
-              disabled={selectedItems.length === 0}
+              disabled={selectedItemIds.length === 0}
             >
               <Fontisto name="snowflake" size={24} color="black" />
               <Text style={globalStyle.h4}>Send to freezer</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center', opacity: selectedItems.length === 0 ? 0.5 : 1 }}
+              style={{ flex : 1, padding: 10, justifyContent: 'center', alignItems: 'center', opacity: selectedItemIds.length === 0 ? 0.5 : 1 }}
               onPress={() => sendTo('basket')}
-              disabled={selectedItems.length === 0}
+              disabled={selectedItemIds.length === 0}
             >
               <Ionicons name="basket" size={24} color="black" />
               <Text style={globalStyle.h4}>Send to basket</Text>

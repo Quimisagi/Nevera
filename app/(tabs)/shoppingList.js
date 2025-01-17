@@ -15,7 +15,7 @@ export default function ShoppingList() {
   const navigation = useNavigation();
   const { shoppingListAddedItems, items } = useGlobal();
 
-  const [availableItems, setAvailableItems] = useState([]);
+  const [shoppingListItems, setShoppingListItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
 
@@ -28,8 +28,12 @@ export default function ShoppingList() {
 
   useEffect(() => {
     const temp = getItems(shoppingListAddedItems, items); 
-    setAvailableItems(temp);
+    setShoppingListItems(temp);
   }, [navigation, shoppingListAddedItems, items]);
+  //Remove the items in selectedItems that are not in shoppingListItems
+  useEffect(() => {
+    setSelectedItems(selectedItems.filter((id) => shoppingListItems.map((item) => item.id).includes(id)));
+  } , [shoppingListItems]);
 
   return (
     <View style={globalStyle.mainContainer}> 
@@ -45,7 +49,7 @@ export default function ShoppingList() {
         </View>
       )}
       <FlatList
-        data={availableItems}
+        data={shoppingListItems}
         ListHeaderComponent={
           <TouchableOpacity onPress={() => router.push({ pathname: '/pickItems', params: { mode: 'shoppingList' } })}>
             <View style={{marginLeft: 11}}>
@@ -79,7 +83,7 @@ export default function ShoppingList() {
         />
       </GestureHandlerRootView>
 
-      {availableItems.length > 0 && (
+      {shoppingListItems.length > 0 && (
         <TouchableOpacity
           style={{
             position: 'absolute',
