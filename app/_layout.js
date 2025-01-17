@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import { GlobalProvider } from "../utils/globalProvider";
 import { StatusBar } from "react-native";
+import Toast from 'react-native-toast-message';
 
 export default function RootLayout() {
   return (
@@ -29,6 +30,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
+      <Toast position="bottom"/>
     </GlobalProvider>
   );
 }

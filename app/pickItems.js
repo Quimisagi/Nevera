@@ -8,6 +8,7 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useGlobal } from '../utils/globalProvider';
 import { getDayNumber } from '../utils/dateManager';
 import uuid from 'uuid-random';
+import Toast from 'react-native-toast-message';
 
 export default function PickItems() {
   const navigation = useNavigation();
@@ -39,6 +40,11 @@ export default function PickItems() {
           date: getDayNumber(),
         };
       });
+      Toast.show({
+        type: 'success',
+        text1: 'Items added succesufly',
+        text2: selectedItems.length === 1 ? '1 item added to ' + mode : selectedItems.length + ' items added to ' + mode,
+      }); 
       switch (mode) {
         case 'fridge':
           setFridge([...fridge, ...tempItems]);

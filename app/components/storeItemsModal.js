@@ -51,17 +51,15 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
       default:
         break;
     }
-    // const newPurchasedItems = purchasedItems.filter((item) => !selectedItemIds.includes(item.id));
     const newItems = shoppingListAddedItems.filter((id) => !selectedItemIds.includes(id));
-    setSelectedItemIds([]);
-    // setPurchasedItems(newPurchasedItems);
-    setShoppingListAddedItems(newItems.map((item) => item));
-    // removeSelectedItems(selectedItemIds.id);
     Toast.show({
       type: 'success',
-      text1: 'Items sent',
-      text2: 'This is some something 👋'
+      text1: 'Items stored succesufly',
+      text2: selectedItemIds.length === 1 ? '1 item stored in ' + destination : selectedItemIds.length + ' items stored in ' + destination,
     });
+
+    setSelectedItemIds([]);
+    setShoppingListAddedItems(newItems.map((item) => item));
   }
 
   useEffect(() => {

@@ -11,6 +11,7 @@ import iconPaths from '../data/iconPaths';
 import ItemModal from './components/itemModal';
 import { useNavigation, router } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 
 export default function CreateItem() {
@@ -60,6 +61,11 @@ export default function CreateItem() {
     };
     setItems((prevItems) => [...prevItems, newItem]);
     clearForm();
+    Toast.show({
+      type: 'success',
+      text1: 'Item created successfully',
+    });
+
     router.back();
   };
 
