@@ -77,7 +77,7 @@ export default function Storage() {
           ) : (
             <FlatList
               data={data}
-              renderItem={({ item }) => <Item item={item} />}
+              renderItem={({ item }) => <Item item={item} displayMode={'storage'} storageType={mode} />}
               keyExtractor={(_, index) => index.toString()}
               numColumns={numColumns}
             />
@@ -88,9 +88,9 @@ export default function Storage() {
   );
 
   const sections = [
-    { data: fridge, title: 'Fridge', icon: <MaterialCommunityIcons name="fridge" size={24} color="black" />, mode: 'fridge' },
-    { data: freezer, title: 'Freezer', icon: <Fontisto name="snowflake" size={24} color="black" />, mode: 'freezer' },
-    { data: basket, title: 'Basket', icon: <Ionicons name="basket" size={24} color="black" />, mode: 'basket' },
+    { data: fridge, title: 'Fridge', icon: <MaterialCommunityIcons name="fridge" size={24} color="#033E63" />, mode: 'fridge' },
+    { data: freezer, title: 'Freezer', icon: <Fontisto name="snowflake" size={24} color="#4BB1BE" />, mode: 'freezer' },
+    { data: basket, title: 'Basket', icon: <Ionicons name="basket" size={24} color="#F2A202" />, mode: 'basket' },
   ];
 
   return (

@@ -21,7 +21,6 @@ export default function CreateItem() {
   const [fridgeTime, setFridgeTime] = useState(0);
   const [freezerTime, setFreezerTime] = useState(0);
   const [basketTime, setBasketTime] = useState(0);
-  const [addedDate, setAddedDate] = useState(new Date());
 
   const [isModalVisible, setIsModalVisible] = useState(false);  
 
@@ -33,7 +32,6 @@ export default function CreateItem() {
     setFridgeTime(0);
     setFreezerTime(0);
     setBasketTime(0);
-    setAddedDate(getDayNumber());
   };
 
   const onChange = (event, selectedDate) => {
@@ -41,13 +39,13 @@ export default function CreateItem() {
     setDate(currentDate);
   };
 
-  const showDatepicker = () => {
-    DateTimePickerAndroid.open({
-      value: addedDate,
-      onChange: onChange,
-      mode: 'date',
-    });
-  };
+  // const showDatepicker = () => {
+  //   DateTimePickerAndroid.open({
+  //     value: addedDate,
+  //     onChange: onChange,
+  //     mode: 'date',
+  //   });
+  // };
 
   const createItem = () => {
     const newItem = {
@@ -57,7 +55,7 @@ export default function CreateItem() {
       fridgeTime,
       freezerTime,
       basketTime,
-      // addedDate,
+      // addedDate: getDayNumber(new Date()),
     };
     setItems((prevItems) => [...prevItems, newItem]);
     clearForm();
@@ -86,7 +84,7 @@ export default function CreateItem() {
         </TouchableOpacity>
       ),
     });
-  } , [navigation, name, icon, fridgeTime, freezerTime, basketTime, addedDate]);
+  } , [navigation, name, icon, fridgeTime, freezerTime, basketTime]);
 
   return (
     <View style={[ globalStyle.mainContainer, globalStyle.secondaryContainer ]}>
@@ -118,7 +116,7 @@ export default function CreateItem() {
           <MaterialCommunityIcons
             name="fridge"
             size={24}
-            color="black"
+            color="#033E63"
             style={{ textAlign: 'center' }}
           />
           <TextInput
@@ -134,7 +132,7 @@ export default function CreateItem() {
           <Fontisto
             name="snowflake"
             size={24}
-            color="black"
+            color="#4BB1BE"
             style={{ textAlign: 'center' }}
           />
           <TextInput
@@ -150,7 +148,7 @@ export default function CreateItem() {
           <Ionicons
             name="basket"
             size={24}
-            color="black"
+            color="#F2A202"
             style={{ textAlign: 'center' }}
           />
           <TextInput

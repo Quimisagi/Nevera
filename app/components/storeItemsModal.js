@@ -35,7 +35,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
       return {
         ...item,
         id: uuid(),
-        date: getDayNumber(),
+        addedDate: getDayNumber(new Date()),
       };
     });
     switch (destination) {
@@ -113,7 +113,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
               onPress={() => sendTo('fridge')}
               disabled={selectedItemIds.length === 0}
             >
-              <MaterialCommunityIcons name="fridge" size={24} color="black" />
+              <MaterialCommunityIcons name="fridge" size={24} color="#033E63" />
               <Text style={globalStyle.h4}>Send to fridge</Text>
             </TouchableOpacity>
 
@@ -122,7 +122,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
               onPress={() => sendTo('freezer')}
               disabled={selectedItemIds.length === 0}
             >
-              <Fontisto name="snowflake" size={24} color="black" />
+              <Fontisto name="snowflake" size={24} color="#4BB1BE" />
               <Text style={globalStyle.h4}>Send to freezer</Text>
             </TouchableOpacity>
 
@@ -131,7 +131,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
               onPress={() => sendTo('basket')}
               disabled={selectedItemIds.length === 0}
             >
-              <Ionicons name="basket" size={24} color="black" />
+              <Ionicons name="basket" size={24} color="#F2A202" />
               <Text style={globalStyle.h4}>Send to basket</Text>
             </TouchableOpacity>
 

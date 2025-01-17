@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { Text, View, FlatList, TouchableOpacity, Dimensions, TextInput } from 'react-native';
 import globalStyle from '../styles/globalStyle';
 import { getItems } from '../data/items_list'; 
 import Item from './components/item';
@@ -16,6 +16,8 @@ export default function PickItems() {
 
   const [numColumns, setNumColumns] = useState(3);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [searchText, setSearchText] = useState('');
+  const [filteredItems, setFilteredItems] = useState([]);
 
   const { shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket, items } = useGlobal();
   const { mode } = params;
@@ -28,21 +30,18 @@ export default function PickItems() {
   };
 
   const handleAddItems = () => {
-    if (mode == 'shoppingList'){
+    if (mode === 'shoppingList') {
       setShoppingListAddedItems(selectedItems);
-    }
-    else {
+    } else {
       let tempItems = getItems(selectedItems, items); 
-      tempItems = tempItems.map((item) => {
-        return {
-          ...item,
-          id: uuid(),
-          date: getDayNumber(),
-        };
-      });
+      tempItems = tempItems.map((item) => ({
+        ...item,
+        id: uuid(),
+        addedDate: getDayNumber(new Date()),
+      }));
       Toast.show({
         type: 'success',
-        text1: 'Items added succesufly',
+        text1: 'Items added successfully',
         text2: selectedItems.length === 1 ? '1 item added to ' + mode : selectedItems.length + ' items added to ' + mode,
       }); 
       switch (mode) {
@@ -60,11 +59,10 @@ export default function PickItems() {
       }
     }
     router.back();
-
-  }
+  };
 
   useEffect(() => {
-    if (mode == 'shoppingList'){
+    if (mode === 'shoppingList') {
       setSelectedItems(shoppingListAddedItems);
     }
     const calculateColumns = () => {
@@ -85,6 +83,15 @@ export default function PickItems() {
     };
   }, []);
 
+  useEffect(() => {
+    // Filter items based on search text
+    setFilteredItems(
+      items.filter((item) =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [searchText, items]);
+
   useLayoutEffect(() => {
     let title = 'Add Items';
     switch (mode) {
@@ -104,7 +111,7 @@ export default function PickItems() {
         break;
     }
     navigation.setOptions({
-      headerTitle: selectedItems.length == 0 ? title : `${selectedItems.length} Items Selected`,
+      headerTitle: selectedItems.length === 0 ? title : `${selectedItems.length} Items Selected`,
       headerRight: () => (
         selectedItems.length > 0 && (
           <TouchableOpacity
@@ -115,31 +122,46 @@ export default function PickItems() {
           </TouchableOpacity>
         )
       ),
-
     });
   }, [selectedItems]);
 
   return (
     <View style={[globalStyle.mainContainer, globalStyle.secondaryContainer]}>
+      <View style={[ globalStyle.row, globalStyle.centered]}>
+        <Ionicons name="search" size={24} color="black" style={{flex: 1, marginLeft: 10}} />
+        <TextInput
+          style={[globalStyle.input, { marginBottom: 10, flex : 9 }]}
+          placeholder="Search items..."
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
       <FlatList
         ListHeaderComponent={
-          <TouchableOpacity style={[ globalStyle.button, {marginBottom: 10} ]} onPress={() => router.push('/createItem')}>
-            <View style={[ globalStyle.row, globalStyle.element ]}>
-              <Ionicons name="create" size={24} color="white" />
-              <Text style={[ globalStyle.h4, {color: 'white', marginLeft: 10} ]}>Create New Item</Text>
-            </View>
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity
+              style={[globalStyle.button, { marginBottom: 10 }]}
+              onPress={() => router.push('/createItem')}
+            >
+              <View style={[globalStyle.row, globalStyle.element]}>
+                <Ionicons name="create" size={24} color="white" />
+                <Text style={[globalStyle.h4, { color: 'white', marginLeft: 10 }]}>
+                  Create New Item
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         }
-        data={items}
-        keyExtractor={(item, index) => item.id || index.toString()} // Adjust key extractor
+        data={filteredItems}
+        keyExtractor={(item, index) => item.id || index.toString()}
         numColumns={numColumns}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => toggleItem(item.id)}
             activeOpacity={1}
           >
             <View style={[globalStyle.itemContainer, { transform: selectedItems.includes(item.id) ? [{ scale: 1 }] : [{ scale: 0.925 }] }]}>
-              <Item item={item} isToggled={selectedItems.includes(item.id)} isToggeable={true} />
+              <Item item={item} isToggled={selectedItems.includes(item.id)} isToggeable={true} displayMode={'pickItems'} />
             </View>
           </TouchableOpacity>
         )}
