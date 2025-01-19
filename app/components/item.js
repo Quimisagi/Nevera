@@ -50,12 +50,14 @@ export default function Item({ item, isToggled, isToggeable = false, displayMode
           ) : storageType === 'freezer' ? (
             <View style={globalStyle.row}>
               <Text style={styles.minorText}>Left:</Text>
-              <Text style={styles.timeText}>{timeLeft(item.freezerTime, item.addedDate)}d</Text>
+              <Text style={[ styles.timeText, { color: timeLeft( item.freezerTime, item.addedDate ) < 2 ? 'red' : 'black' } ]}>
+              {timeLeft( item.freezerTime, item.addedDate )}d</Text>
             </View>
           ) : storageType === 'basket' ? (
             <View style={globalStyle.row}>
               <Text style={styles.minorText}>Left:</Text>
-              <Text style={styles.timeText}>{timeLeft(item.basketTime, item.addedDate)}d</Text>
+              <Text style={[ styles.timeText, { color: timeLeft( item.basketTime, item.addedDate ) < 2 ? 'red' : 'black' } ]}>
+              {timeLeft( item.basketTime, item.addedDate )}d</Text>
             </View>
           ) : null
         )}

@@ -71,6 +71,9 @@ export default function ShoppingList() {
             onChecked={toggleItem}
           />
         )}
+        ListFooterComponent={
+          <View style={{ height: 60 }} />
+        }
         keyExtractor={(item, index) => item.id.toString()}
         contentContainerStyle={{ paddingVertical: 10 }}
       />
@@ -87,7 +90,7 @@ export default function ShoppingList() {
         <TouchableOpacity
           style={{
             position: 'absolute',
-            bottom: 80,
+            bottom: 40,
             left: 0,
             right: 0,
             alignItems: 'center',

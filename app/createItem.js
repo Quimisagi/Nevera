@@ -48,26 +48,34 @@ export default function CreateItem() {
   //   });
   // };
 
-async function createItem() {
-    const newItem = {
-        id: uuid(),
-        name,
-        icon,
-        fridgeTime,
-        freezerTime,
-        basketTime,
-        // addedDate: getDayNumber(new Date()),
-    };
-    setItems((prevItems) => [...prevItems, newItem]);
-    await SecureStore.setItemAsync('items', JSON.stringify([...prevItems, newItem]));
-    clearForm();
-    Toast.show({
-        type: 'success',
-        text1: 'Item created successfully',
-    });
+const createItem = async () => {
+  const newItem = {
+    id: uuid(),
+    name,
+    icon,
+    fridgeTime,
+    freezerTime,
+    basketTime,
+    // addedDate: getDayNumber(new Date()),
+  };
 
-    router.back();
-}
+  // Use a callback to update state and ensure the correct data is passed to SecureStore
+  setItems((prevItems) => {
+    const updatedItems = [...prevItems, newItem];
+    // Update SecureStore after calculating the new state
+    SecureStore.setItemAsync('items', JSON.stringify(updatedItems))
+      .then(() => {
+        Toast.show({
+          type: 'success',
+          text1: 'Item created successfully',
+        });
+        clearForm();
+        router.back();
+      })
+      .catch((error) => console.error('Error storing items in SecureStore:', error));
+    return updatedItems;
+  });
+};
 
 
   useLayoutEffect(() => {

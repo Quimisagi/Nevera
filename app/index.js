@@ -10,16 +10,31 @@ import * as SecureStore from 'expo-secure-store';
 
 export default function Index() {
   const navigation = useNavigation();
-  const { items, setItems } = useGlobal();
-
+  const { items, setItems, shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket } = useGlobal();
   useEffect(() => {
     navigation.setOptions({headerShown: false});
     async function loadData() {
-      let result = await SecureStore.getItemAsync('items');
-      if (result) {
-        setItems(JSON.parse(result));
+      let resultItems = await SecureStore.getItemAsync('items');
+      if (items) {
+        setItems(JSON.parse(resultItems));
       } else {
         setItems(defaultItems);
+      }
+      let resultShoppingList = await SecureStore.getItemAsync('shoppingList');
+      if (resultShoppingList) {
+        setShoppingListAddedItems(JSON.parse(resultShoppingList));
+      }
+      let resultFridge = await SecureStore.getItemAsync('fridge');
+      if (resultFridge) {
+        setFridge(JSON.parse(resultFridge));
+      }
+      let resultFreezer = await SecureStore.getItemAsync('freezer');
+      if (resultFreezer) {
+        setFreezer(JSON.parse(resultFreezer));
+      }
+      let resultBasket = await SecureStore.getItemAsync('basket');
+      if (resultBasket) {
+        setBasket(JSON.parse(resultBasket));
       }
     }
     loadData();

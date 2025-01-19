@@ -9,6 +9,7 @@ import { useGlobal } from '../utils/globalProvider';
 import { getDayNumber } from '../utils/dateManager';
 import uuid from 'uuid-random';
 import Toast from 'react-native-toast-message';
+import * as SecureStore from 'expo-secure-store';
 
 export default function PickItems() {
   const navigation = useNavigation();
@@ -29,36 +30,73 @@ export default function PickItems() {
     setSelectedItems(newItems);
   };
 
-  const handleAddItems = () => {
+  const handleAddItems = async () => {
     if (mode === 'shoppingList') {
-      setShoppingListAddedItems(selectedItems);
+      await handleShoppingListAddition();
     } else {
-      let tempItems = getItems(selectedItems, items); 
-      tempItems = tempItems.map((item) => ({
-        ...item,
-        id: uuid(),
-        addedDate: getDayNumber(new Date()),
-      }));
-      Toast.show({
-        type: 'success',
-        text1: 'Items added successfully',
-        text2: selectedItems.length === 1 ? '1 item added to ' + mode : selectedItems.length + ' items added to ' + mode,
-      }); 
-      switch (mode) {
-        case 'fridge':
-          setFridge([...fridge, ...tempItems]);
-          break;
-        case 'freezer':
-          setFreezer([...freezer, ...tempItems]);
-          break;
-        case 'basket':
-          setBasket([...basket, ...tempItems]);
-          break;
-        default:
-          break;
-      }
+      const tempItems = processAndPrepareItems(selectedItems, items);
+      await handleModeSpecificUpdates(mode, tempItems);
+      showToast(selectedItems.length, mode);
     }
     router.back();
+  };
+
+  // Handles shopping list-specific logic
+  const handleShoppingListAddition = async () => {
+    setShoppingListAddedItems(selectedItems);
+    try {
+      await SecureStore.setItemAsync('shoppingList', JSON.stringify(selectedItems));
+      Toast.show({
+        type: 'success',
+        text1: 'Items added to shopping list successfully',
+      });
+    } catch (error) {
+      console.error('Error storing shopping list items:', error);
+    }
+  };
+
+  // Prepares items and processes mode-specific updates
+  const processAndPrepareItems = (selectedItems, items) => {
+    return getItems(selectedItems, items).map((item) => ({
+      ...item,
+      id: uuid(),
+      addedDate: getDayNumber(new Date()),
+    }));
+  };
+
+  // Handles updates for fridge, freezer, and basket
+  const handleModeSpecificUpdates = async (mode, tempItems) => {
+    const updateStateAndStore = async (key, stateUpdater) => {
+      stateUpdater((prev) => {
+        const updated = [...prev, ...tempItems];
+        SecureStore.setItemAsync(key, JSON.stringify(updated))
+          .catch((error) => console.error(`Error storing ${key} items:`, error));
+        return updated;
+      });
+    };
+
+    switch (mode) {
+      case 'fridge':
+        await updateStateAndStore('fridge', setFridge);
+        break;
+      case 'freezer':
+        await updateStateAndStore('freezer', setFreezer);
+        break;
+      case 'basket':
+        await updateStateAndStore('basket', setBasket);
+        break;
+      default:
+        console.error(`Unknown mode: ${mode}`);
+    }
+  };
+
+  // Handles toast notifications
+  const showToast = (count, mode) => {
+    Toast.show({
+      type: 'success',
+      text1: 'Items added successfully',
+      text2: count === 1 ? `1 item added to ${mode}` : `${count} items added to ${mode}`,
+    });
   };
 
   useEffect(() => {

@@ -11,12 +11,12 @@ import { useGlobal } from '../../utils/globalProvider';
 import {getDayNumber} from '../../utils/dateManager';
 import uuid from 'uuid-random';
 import Toast from 'react-native-toast-message';
-
+import * as SecureStore from 'expo-secure-store';
 
 export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, removeSelectedItems }) {
   const [purchasedItems, setPurchasedItems] = useState([]);
   const [selectedItemIds, setSelectedItemIds] = useState([]);
-  const { fridge, setFridge, freezer, setFreezer, basket, setBasket, shoppingListAddedItems, setShoppingListAddedItems, items, SetItems } = useGlobal();
+  const { fridge, setFridge, freezer, setFreezer, basket, setBasket, shoppingListAddedItems, setShoppingListAddedItems, items, setItems } = useGlobal();
   
   const toggleItem = (id) => {
     const newItems = selectedItemIds.includes(id)
@@ -29,7 +29,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
     setSelectedItemIds(purchasedItems.map((item) => item.id));
   }
 
-  const sendTo = (destination) => {
+  const sendTo = async (destination) => {
     let tempItems = getItems(selectedItemIds, items);
     tempItems = tempItems.map((item) => {
       return {
@@ -40,18 +40,24 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
     });
     switch (destination) {
       case 'fridge':
+        //Save with SecureStore
+        await SecureStore.setItemAsync('fridge', JSON.stringify([...fridge, ...tempItems]));
+        console.log('Si guarda en la nevera');
         setFridge([...fridge, ...tempItems]);
         break;
       case 'freezer':
+        await SecureStore.setItemAsync('freezer', JSON.stringify([...freezer, ...tempItems]));
         setFreezer([...freezer, ...tempItems]);
         break;
       case 'basket':
+        await SecureStore.setItemAsync('basket', JSON.stringify([...basket, ...tempItems]));
         setBasket([...basket, ...tempItems]);
         break;
       default:
         break;
     }
     const newItems = shoppingListAddedItems.filter((id) => !selectedItemIds.includes(id));
+    await SecureStore.setItemAsync('shoppingList', JSON.stringify(newItems));
     Toast.show({
       type: 'success',
       text1: 'Items stored succesufly',
@@ -93,6 +99,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
               </View>
             )}
             <FlatList
+              style={{maxHeight: '85%'}}
               data={purchasedItems}
               numColumns={3}
               renderItem={({ item, index }) => (
@@ -105,6 +112,7 @@ export default function StoreItemsModal({ isVisible, onClose, purchasedItemIds, 
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
+              contentContainerStyle={{alignItems: 'center', justifyContent: 'center'}}
             />
           </View>
           <View style={[globalStyle.row, globalStyle.element, {marginTop: 10}]}>
