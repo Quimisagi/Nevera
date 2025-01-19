@@ -77,7 +77,11 @@ export default function Storage() {
           ) : (
             <FlatList
               data={data}
-              renderItem={({ item }) => <Item item={item} displayMode={'storage'} storageType={mode} />}
+              renderItem={({ item }) => ( 
+                <TouchableOpacity onPress={() => router.push({ pathname: '/itemEdit/' + item.id.toString() + '?mode=' + mode})}>
+                  <Item item={item} displayMode={'storage'} storageType={mode} />
+                </TouchableOpacity>             
+              )}
               keyExtractor={(_, index) => index.toString()}
               numColumns={numColumns}
             />

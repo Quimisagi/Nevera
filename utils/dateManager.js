@@ -8,6 +8,13 @@ export const getDayNumber = (date) => {
   return dayNumber;
 };
 
+export const getDayFromNumber = (dayNumber) => {
+  const startOfYear = new Date(2025, 0, 1);
+  const date = new Date(startOfYear);
+  date.setDate(date.getDate() + dayNumber - 1);
+  return date;
+};
+
   //Function for calculating how much time left
 
 export const timeLeft = (expirationTime, addedTime) => {

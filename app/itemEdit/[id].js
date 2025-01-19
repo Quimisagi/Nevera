@@ -1,31 +1,32 @@
 import React from 'react';
 import { useState, useEffect, useLayoutEffect} from 'react';
 import { Text, View, TouchableOpacity, TextInput, FlatList, Image, StyleSheet } from 'react-native';
-import globalStyle from '../styles/globalStyle';
-import { useGlobal } from '../utils/globalProvider';
-import {getDayNumber} from '../utils/dateManager';
+import globalStyle from '../../styles/globalStyle';
+import { useGlobal } from '../../utils/globalProvider';
+import {getDayNumber, getDayFromNumber} from '../../utils/dateManager';
 import uuid from 'uuid-random';
 import { MaterialCommunityIcons, Fontisto, Ionicons } from '@expo/vector-icons';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import iconPaths from '../data/iconPaths';
-import ItemModal from './components/itemModal';
-import { useNavigation, router } from 'expo-router';
+import ItemModal from '../components/itemModal';
+import { useNavigation, router, useLocalSearchParams } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import * as SecureStore from 'expo-secure-store';
 
-
-export default function CreateItem() {
-  const { setItems } = useGlobal(); 
+export default function ItemEdit() {
+  const { fridge, setFridge, freezer, setFreezer, basket, setBasket} = useGlobal();
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(require("/home/quimisagi/Projects/Nevera/assets/icons/kawaii-bread.png"));
   const [fridgeTime, setFridgeTime] = useState(0);
   const [freezerTime, setFreezerTime] = useState(0);
   const [basketTime, setBasketTime] = useState(0);
+  const [addedDate, setDate] = useState(getDayNumber(new Date()));
 
   const [isModalVisible, setIsModalVisible] = useState(false);  
 
   const navigation = useNavigation();
+  const params = useLocalSearchParams();
+  const {id, mode} = params;
 
   const clearForm = () => {
     setName('');
@@ -36,39 +37,76 @@ export default function CreateItem() {
   };
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
+    const currentDate = getDayNumber(selectedDate);
     setDate(currentDate);
   };
 
-  const createItem = async () => {
+  const showDatepicker = () => {
+    DateTimePickerAndroid.open({
+      value: getDayFromNumber(addedDate),
+      onChange: onChange,
+      mode: 'date',
+    });
+  };
+
+  const updateItem = async () => {
     const newItem = {
-      id: uuid(),
+      id,
       name,
       icon,
       fridgeTime,
       freezerTime,
       basketTime,
-      // addedDate: getDayNumber(new Date()),
+      addedDate,
     };
-
-    // Use a callback to update state and ensure the correct data is passed to SecureStore
-    setItems((prevItems) => {
-      const updatedItems = [...prevItems, newItem];
-      // Update SecureStore after calculating the new state
-      SecureStore.setItemAsync('items', JSON.stringify(updatedItems))
-        .then(() => {
-          Toast.show({
-            type: 'success',
-            text1: 'Item created successfully',
-          });
-          clearForm();
-          router.back();
-        })
-        .catch((error) => console.error('Error storing items in SecureStore:', error));
-      return updatedItems;
+    if(mode === 'fridge') {
+      setFridge((prevItems) => {
+        const updatedItems = prevItems.map((item) => (item.id === id ? newItem : item));
+        SecureStore.setItemAsync('fridge', JSON.stringify(updatedItems));
+        return updatedItems;
+      });
+    }
+    if(mode === 'freezer') {
+      setFreezer((prevItems) => {
+        const updatedItems = prevItems.map((item) => (item.id === id ? newItem : item));
+        SecureStore.setItemAsync('freezer', JSON.stringify(updatedItems));
+        return updatedItems;
+      });
+    }
+    if(mode === 'basket') {
+      setBasket((prevItems) => {
+        const updatedItems = prevItems.map((item) => (item.id === id ? newItem : item));
+        SecureStore.setItemAsync('basket', JSON.stringify(updatedItems));
+        return updatedItems;
+      });
+    }
+    Toast.show({
+      type: 'success',
+      text1: 'Item updated successfully',
     });
-  };
+    router.back();
+  }
 
+  useEffect(() => {
+    if (id) {
+      var item = null;
+      if(mode === 'fridge') {
+        item = fridge.find((item) => item.id === id);
+      } else if(mode === 'freezer') {
+        item = freezer.find((item) => item.id === id);
+      } else if(mode === 'basket') {
+        item = basket.find((item) => item.id === id);
+      }
+      if (item) {
+        setName(item.name);
+        setIcon(item.icon);
+        setFridgeTime(item.fridgeTime);
+        setFreezerTime(item.freezerTime);
+        setBasketTime(item.basketTime);
+        setDate(item.addedDate);
+      }
+    }
+  }, [id]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -80,7 +118,7 @@ export default function CreateItem() {
             ...( !name ? { opacity: 0.5 } : {} ) // Use spread operator for conditional styles
           }}
           disabled={!name}
-          onPress={createItem}
+          onPress={updateItem}
         >
           <AntDesign name="check" size={24} color="black" />
         </TouchableOpacity>
@@ -104,17 +142,17 @@ export default function CreateItem() {
           />
         </View>
       </View>
-      {/* <Text style={[globalStyle.h4, {marginTop:20}]}>Added Date</Text> */}
-      {/* <TouchableOpacity */}
-      {/*   style={globalStyle.input} */}
-      {/*   onPress={() => showDatepicker()} */}
-      {/* > */}
-      {/*   <Text>{addedDate.toDateString()}</Text> */}
-      {/* </TouchableOpacity> */}
+      <Text style={[globalStyle.h4, {marginTop:20}]}>Added Date</Text>
+      <TouchableOpacity
+        style={globalStyle.input}
+        onPress={() => showDatepicker()}
+      >
+        <Text>{getDayFromNumber(addedDate).toLocaleDateString()}</Text>
+      </TouchableOpacity>
       <Text style={[ globalStyle.h4, {marginTop:30} ]}>Storage Duration</Text>
 
       <View style={[globalStyle.row, globalStyle.element, { marginTop: 30 }]}>
-        <View style={{ flex : 1}}>
+        <View style={{ flex: 1 }}>
           <MaterialCommunityIcons
             name="fridge"
             size={24}
@@ -166,6 +204,7 @@ export default function CreateItem() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
@@ -179,4 +218,5 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
 });
+
 
