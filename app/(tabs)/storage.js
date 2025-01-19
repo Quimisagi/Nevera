@@ -6,12 +6,16 @@ import globalStyle from '../../styles/globalStyle';
 import { useGlobal } from '../../utils/globalProvider';
 import Item from '../components/item';
 import { MaterialCommunityIcons, Fontisto, Ionicons } from '@expo/vector-icons';
+import * as SecureStore from 'expo-secure-store';
+import Toast from 'react-native-toast-message';
 
 
 export default function Storage() {
   const navigation = useNavigation();
-  const { fridge, freezer, basket } = useGlobal();
+  const { fridge, freezer, basket, setFridge, setFreezer, setBasket } = useGlobal();
   const [numColumns, setNumColumns] = useState(3);
+  const [areItemsToggeable, setAreItemsToggeable] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
   const [expandedSections, setExpandedSections] = useState({
     fridge: true,
     freezer: true,
@@ -43,6 +47,35 @@ export default function Storage() {
       [section]: !prevState[section],
     }));
   };
+
+  const toggleItem = (id) => {
+    const newItems = selectedItems.includes(id)
+      ? selectedItems.filter((temp) => temp !== id)
+      : [...selectedItems, id];
+    setSelectedItems(newItems);
+    if (newItems.length === 0) {
+      setAreItemsToggeable(false)
+    }
+  };
+
+  const deleteItems = async () => {
+    const newFridge = fridge.filter((item) => !selectedItems.includes(item.id));
+    const newFreezer = freezer.filter((item) => !selectedItems.includes(item.id));
+    const newBasket = basket.filter((item) => !selectedItems.includes(item.id));
+    setFridge(newFridge);
+    setFreezer(newFreezer);
+    setBasket(newBasket);
+    setSelectedItems([]);
+    setAreItemsToggeable(false);
+    await SecureStore.setItemAsync('fridge', JSON.stringify(newFridge));
+    await SecureStore.setItemAsync('freezer', JSON.stringify(newFreezer));
+    await SecureStore.setItemAsync('basket', JSON.stringify(newBasket));
+    Toast.show({
+      type: 'success',
+      text1: 'Items deleted successfully',
+    });
+  }
+
 
   const renderHeader = (title, icon, mode) => (
     <View style={[globalStyle.row, { marginTop: 25, alignItems: 'center' }]}>
@@ -78,8 +111,15 @@ export default function Storage() {
             <FlatList
               data={data}
               renderItem={({ item }) => ( 
-                <TouchableOpacity onPress={() => router.push({ pathname: '/itemEdit/' + item.id.toString() + '?mode=' + mode})}>
-                  <Item item={item} displayMode={'storage'} storageType={mode} />
+                <TouchableOpacity 
+                  onPress={() => {
+                    if (areItemsToggeable) { toggleItem(item.id) }
+                    else router.push({ pathname: '/itemEdit/' + item.id.toString() + '?mode=' + mode})}
+                  }
+                  onLongPress={() => { setAreItemsToggeable(true), toggleItem(item.id) }}
+                >
+                  <Item item={item} isToggled={selectedItems.includes(item.id)}
+                    isToggeable={areItemsToggeable} displayMode={'storage'} storageType={mode} />
                 </TouchableOpacity>             
               )}
               keyExtractor={(_, index) => index.toString()}
@@ -99,7 +139,18 @@ export default function Storage() {
 
   return (
     <View style={globalStyle.mainContainer}>
-      <Text style={globalStyle.h1}>Storage</Text>
+      <View style={globalStyle.row}>
+        <View style={{ flex : 9}}>
+          <Text style={globalStyle.h1}>Storage</Text>
+        </View>
+        {selectedItems.length > 0 && (
+          <View style={{ flex : 1, marginTop: 22.5}}>
+            <TouchableOpacity onPress={() => deleteItems()}>
+              <MaterialCommunityIcons name="delete" size={24} color="red" />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
       <FlatList
         data={sections}
         renderItem={({ item }) => renderSection(item.data, item.title, item.icon, item.mode)}

@@ -4,7 +4,7 @@ import globalStyle from '../styles/globalStyle';
 import { getItems } from '../data/items_list'; 
 import Item from './components/item';
 import { useNavigation, router, useLocalSearchParams } from 'expo-router';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGlobal } from '../utils/globalProvider';
 import { getDayNumber } from '../utils/dateManager';
 import uuid from 'uuid-random';
@@ -20,7 +20,7 @@ export default function PickItems() {
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState([]);
 
-  const { shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket, items } = useGlobal();
+  const { shoppingListAddedItems, setShoppingListAddedItems, fridge, setFridge, freezer, setFreezer, basket, setBasket, items, setItems } = useGlobal();
   const { mode } = params;
 
   const toggleItem = (id) => {
@@ -40,6 +40,22 @@ export default function PickItems() {
     }
     router.back();
   };
+
+  const deleteItems = async () => {
+    //Only the items added in items array
+    const itemsToDelete = getItems(selectedItems, items);
+    const updatedItems = items.filter((item) => !itemsToDelete.includes(item));
+    setSelectedItems([]);
+    setItems(updatedItems);
+    SecureStore.setItemAsync('items', JSON.stringify(updatedItems))
+      .then(() => {
+        Toast.show({
+          type: 'success',
+          text1: 'Items deleted successfully',
+        });
+      })
+      .catch((error) => console.error('Error deleting items:', error));
+  }
 
   // Handles shopping list-specific logic
   const handleShoppingListAddition = async () => {
@@ -152,12 +168,18 @@ export default function PickItems() {
       headerTitle: selectedItems.length === 0 ? title : `${selectedItems.length} Items Selected`,
       headerRight: () => (
         selectedItems.length > 0 && (
-          <TouchableOpacity
-            style={{ margin: 15 }}
-            onPress={handleAddItems}
-          >
-            <AntDesign name="check" size={24} color="black" />
-          </TouchableOpacity>
+          <View style={globalStyle.row}>
+            <TouchableOpacity style={{ marginTop: 15 }} onPress={() => deleteItems()}>
+              <MaterialCommunityIcons name="delete" size={24} color="red" />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{ margin: 15 }}
+              onPress={handleAddItems}
+            >
+              <AntDesign name="check" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
         )
       ),
     });
