@@ -9,7 +9,12 @@ import { useGlobal } from '../utils/globalProvider';
 import { getDayNumber } from '../utils/dateManager';
 import uuid from 'uuid-random';
 import Toast from 'react-native-toast-message';
-import * as SecureStore from 'expo-secure-store';
+import { Alert } from 'react-native';
+
+import { MMKVLoader, useMMKVStorage } from 'react-native-mmkv-storage';
+
+const MMKV = new MMKVLoader().initialize();
+
 
 export default function PickItems() {
   const navigation = useNavigation();
@@ -28,6 +33,7 @@ export default function PickItems() {
       ? selectedItems.filter((temp) => temp !== id)
       : [...selectedItems, id];
     setSelectedItems(newItems);
+    console.log('Selected items:', newItems);
   };
 
   const handleAddItems = async () => {
@@ -40,28 +46,31 @@ export default function PickItems() {
     }
     router.back();
   };
-
-  const deleteItems = async () => {
-    //Only the items added in items array
-    const itemsToDelete = getItems(selectedItems, items);
-    const updatedItems = items.filter((item) => !itemsToDelete.includes(item));
-    setSelectedItems([]);
+  const deleteItems = async (id) => {
+    const updatedItems = items.filter((item) => item.id !== id);
+    const updatedSelectedItems = selectedItems.filter((itemId) => itemId !== id);
     setItems(updatedItems);
-    SecureStore.setItemAsync('items', JSON.stringify(updatedItems))
-      .then(() => {
-        Toast.show({
-          type: 'success',
-          text1: 'Items deleted successfully',
-        });
-      })
-      .catch((error) => console.error('Error deleting items:', error));
-  }
+    setSelectedItems(updatedSelectedItems);
+    setShoppingListAddedItems(updatedSelectedItems);
+
+    try {
+      await MMKV.setStringAsync('items', JSON.stringify(updatedItems));
+      await MMKV.setStringAsync('selectedItems', JSON.stringify(updatedSelectedItems));
+      console.log(updatedSelectedItems);
+      Toast.show({
+        type: 'success',
+        text1: 'Items deleted successfully',
+      });
+    } catch (error) {
+      console.error('Error deleting items:', error);
+    }
+  };
 
   // Handles shopping list-specific logic
   const handleShoppingListAddition = async () => {
     setShoppingListAddedItems(selectedItems);
     try {
-      await SecureStore.setItemAsync('shoppingList', JSON.stringify(selectedItems));
+      await MMKV.setStringAsync('shoppingList', JSON.stringify(selectedItems));
       Toast.show({
         type: 'success',
         text1: 'Items added to shopping list successfully',
@@ -73,6 +82,7 @@ export default function PickItems() {
 
   // Prepares items and processes mode-specific updates
   const processAndPrepareItems = (selectedItems, items) => {
+    console.log('Processing items:', selectedItems, items);
     return getItems(selectedItems, items).map((item) => ({
       ...item,
       id: uuid(),
@@ -85,7 +95,7 @@ export default function PickItems() {
     const updateStateAndStore = async (key, stateUpdater) => {
       stateUpdater((prev) => {
         const updated = [...prev, ...tempItems];
-        SecureStore.setItemAsync(key, JSON.stringify(updated))
+        AsyncStorage.setItemAsync(key, JSON.stringify(updated))
           .catch((error) => console.error(`Error storing ${key} items:`, error));
         return updated;
       });
@@ -115,6 +125,25 @@ export default function PickItems() {
     });
   };
 
+  const confirmDelete = (id) => {
+    Alert.alert(
+      "Delete Item",
+      "Are you sure you want to delete this item?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => deleteItems(id)
+        }
+      ],
+      { cancelable: true }
+    );
+  };
+
   useEffect(() => {
     if (mode === 'shoppingList') {
       setSelectedItems(shoppingListAddedItems);
@@ -139,11 +168,14 @@ export default function PickItems() {
 
   useEffect(() => {
     // Filter items based on search text
-    setFilteredItems(
-      items.filter((item) =>
-        item.name.toLowerCase().includes(searchText.toLowerCase())
-      )
-    );
+    if(items){
+      setFilteredItems(
+        items.filter((item) =>
+          item.name.toLowerCase().includes(searchText.toLowerCase())
+        )
+      );
+
+    }
   }, [searchText, items]);
 
   useLayoutEffect(() => {
@@ -169,10 +201,6 @@ export default function PickItems() {
       headerRight: () => (
         selectedItems.length > 0 && (
           <View style={globalStyle.row}>
-            <TouchableOpacity style={{ marginTop: 15 }} onPress={() => deleteItems()}>
-              <MaterialCommunityIcons name="delete" size={24} color="red" />
-            </TouchableOpacity>
-
             <TouchableOpacity
               style={{ margin: 15 }}
               onPress={handleAddItems}
@@ -219,6 +247,7 @@ export default function PickItems() {
           <TouchableOpacity
             onPress={() => toggleItem(item.id)}
             activeOpacity={1}
+            onLongPress={() => {confirmDelete(item.id)}}
           >
             <View style={[globalStyle.itemContainer, { transform: selectedItems.includes(item.id) ? [{ scale: 1 }] : [{ scale: 0.925 }] }]}>
               <Item item={item} isToggled={selectedItems.includes(item.id)} isToggeable={true} displayMode={'pickItems'} />

@@ -18,7 +18,7 @@ import * as SecureStore from 'expo-secure-store';
 export default function CreateItem() {
   const { setItems } = useGlobal(); 
   const [name, setName] = useState('');
-  const [icon, setIcon] = useState(require("/home/quimisagi/Projects/Nevera/assets/icons/kawaii-bread.png"));
+  const [icon, setIcon] = useState(require("./kawaii-bread.png"));
   const [fridgeTime, setFridgeTime] = useState(0);
   const [freezerTime, setFreezerTime] = useState(0);
   const [basketTime, setBasketTime] = useState(0);
