@@ -33,7 +33,6 @@ export default function PickItems() {
       ? selectedItems.filter((temp) => temp !== id)
       : [...selectedItems, id];
     setSelectedItems(newItems);
-    console.log('Selected items:', newItems);
   };
 
   const handleAddItems = async () => {
@@ -95,7 +94,7 @@ export default function PickItems() {
     const updateStateAndStore = async (key, stateUpdater) => {
       stateUpdater((prev) => {
         const updated = [...prev, ...tempItems];
-        AsyncStorage.setItemAsync(key, JSON.stringify(updated))
+        MMKV.setStringAsync(key, JSON.stringify(updated))
           .catch((error) => console.error(`Error storing ${key} items:`, error));
         return updated;
       });
@@ -199,16 +198,14 @@ export default function PickItems() {
     navigation.setOptions({
       headerTitle: selectedItems.length === 0 ? title : `${selectedItems.length} Items Selected`,
       headerRight: () => (
-        selectedItems.length > 0 && (
-          <View style={globalStyle.row}>
-            <TouchableOpacity
-              style={{ margin: 15 }}
-              onPress={handleAddItems}
-            >
-              <AntDesign name="check" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
-        )
+        <View style={globalStyle.row}>
+          <TouchableOpacity
+            style={{ margin: 15 }}
+            onPress={handleAddItems}
+          >
+            <AntDesign name="check" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
       ),
     });
   }, [selectedItems]);
