@@ -6,8 +6,6 @@ import { useGlobal } from '../utils/globalProvider';
 import {getDayNumber} from '../utils/dateManager';
 import uuid from 'uuid-random';
 import { MaterialCommunityIcons, Fontisto, Ionicons } from '@expo/vector-icons';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import iconPaths from '../data/iconPaths';
 import ItemModal from './components/itemModal';
 import { useNavigation, router } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
@@ -104,13 +102,6 @@ export default function CreateItem() {
           />
         </View>
       </View>
-      {/* <Text style={[globalStyle.h4, {marginTop:20}]}>Added Date</Text> */}
-      {/* <TouchableOpacity */}
-      {/*   style={globalStyle.input} */}
-      {/*   onPress={() => showDatepicker()} */}
-      {/* > */}
-      {/*   <Text>{addedDate.toDateString()}</Text> */}
-      {/* </TouchableOpacity> */}
       <Text style={[ globalStyle.h4, {marginTop:30} ]}>Storage Duration</Text>
 
       <View style={[globalStyle.row, globalStyle.element, { marginTop: 30 }]}>

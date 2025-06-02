@@ -1,4 +1,9 @@
 const iconPaths = {
+  "food": require("../assets/icons/food.png"),
+  "circle-red": require("../assets/icons/circle-red.png"),
+  "circle-green": require("../assets/icons/circle-green.png"),
+  "circle-blue": require("../assets/icons/circle-blue.png"),
+  "circle-yellow": require("../assets/icons/circle-yellow.png"),
   "apple-fruit": require("../assets/icons/apple-fruit.png"),
   "apple-fruit2": require("../assets/icons/apple-fruit2.png"),
   "apricot": require("../assets/icons/apricot.png"),
@@ -18,6 +23,7 @@ const iconPaths = {
   "birthday-cake": require("../assets/icons/birthday-cake.png"),
   "biscuits": require("../assets/icons/biscuits.png"),
   "blueberry": require("../assets/icons/blueberry.png"),
+  "butter": require("../assets/icons/butter.png"),
   "brazil-nut": require("../assets/icons/brazil-nut.png"),
   "bread-and-rolling-pin": require("../assets/icons/bread-and-rolling-pin.png"),
   "bread-loaf": require("../assets/icons/bread-loaf.png"),
@@ -241,6 +247,7 @@ const iconPaths = {
   "wicker-basket": require("../assets/icons/wicker-basket.png"),
   "worcestershire-sauce": require("../assets/icons/worcestershire-sauce.png"),
   "wrap": require("../assets/icons/wrap.png"),
+  "vegetable": require("../assets/icons/vegetable.png"),
   "yogurt": require("../assets/icons/yogurt.png"),
 };
 export default iconPaths;

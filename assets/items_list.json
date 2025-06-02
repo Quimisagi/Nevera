@@ -6,7 +6,7 @@
   },
   {
     "name": "butter",
-    "icon": "require('../assets/icons/biscuit.png')",
+    "icon": "require('../assets/icons/butter.png')",
     "time": 30
   },
   {

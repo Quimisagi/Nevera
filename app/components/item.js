@@ -22,7 +22,7 @@ export default function Item({ item, isToggled, isToggeable = false, displayMode
       <Image source={item.icon} style={[globalStyle.element, { width: 50, height: 50, marginTop: isToggeable ? 20 : 10 }]} />
 
       <View style={[globalStyle.element, globalStyle.centered]}>
-        <Text style={[globalStyle.h4]}>{item.name}</Text>
+        <Text numberOfLines={1} ellipsizeMode="tail" style={[globalStyle.h4]}>{item.name}</Text>
 
         {displayMode === 'pickItems' && (
           <View style={[ globalStyle.centered, {marginTop: 5} ]}>

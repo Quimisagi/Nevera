@@ -55,7 +55,7 @@ export default function PickItems() {
     try {
       await MMKV.setStringAsync('items', JSON.stringify(updatedItems));
       await MMKV.setStringAsync('selectedItems', JSON.stringify(updatedSelectedItems));
-      console.log(updatedSelectedItems);
+      await MMKV.setStringAsync('shoppingList', JSON.stringify(updatedSelectedItems));
       Toast.show({
         type: 'success',
         text1: 'Items deleted successfully',
